@@ -1,0 +1,606 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>ryder pongracic // portfolio</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Ryder Pongracic — CS @ Georgia Tech, building distributed systems, query engines, and graph-data tooling.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #e6dfcb;
+    --paper: #ddd7c3;
+    --ink: #1d201c;
+    --dim: #6a6a60;
+    --rule: #b8b095;
+    --accent: #1f4d3f;
+    --accent2: #8a6a2a;
+    --mono: 'DM Mono', ui-monospace, Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--mono);
+    font-size: 14px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-transform: lowercase;
+    font-feature-settings: "ss01";
+    cursor: none;
+  }
+  @media (hover: none) { body { cursor: auto; } }
+
+  /* halftone bg */
+  body::before {
+    content: "";
+    position: fixed; inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.42;
+    background-image:
+      radial-gradient(circle, rgba(31,77,63,0.6) 1.2px, transparent 1.6px),
+      radial-gradient(circle, rgba(138,106,42,0.5) 1.0px, transparent 1.4px);
+    background-size: 14px 14px, 22px 22px;
+    background-position: 0 0, 7px 11px;
+    mix-blend-mode: multiply;
+  }
+
+  /* cursor spotlight */
+  .cursor-glow {
+    position: fixed; left: 0; top: 0;
+    width: 520px; height: 520px;
+    margin-left: -260px; margin-top: -260px;
+    pointer-events: none; z-index: 2;
+    background: radial-gradient(circle, rgba(120,160,140,0.45) 0%, rgba(120,160,140,0.15) 35%, transparent 70%);
+    mix-blend-mode: multiply;
+    transform: translate3d(50vw, 50vh, 0);
+    transition: opacity 0.3s ease;
+    opacity: 1;
+  }
+  /* cursor dot */
+  .cursor-ring {
+    position: fixed; left: 0; top: 0;
+    width: 10px; height: 10px;
+    margin-left: -5px; margin-top: -5px;
+    pointer-events: none; z-index: 4;
+    background: var(--accent);
+    border-radius: 50%;
+    transform: translate3d(50vw, 50vh, 0);
+    transition: opacity 0.2s ease, width 0.18s ease, height 0.18s ease, margin 0.18s ease;
+    opacity: 0.9;
+    mix-blend-mode: multiply;
+  }
+  .cursor-ring::before {
+    content: ""; position: absolute; inset: -8px;
+    border: 1px solid var(--accent);
+    border-radius: 50%;
+    opacity: 0.35;
+  }
+  body.cursor-hot .cursor-ring {
+    width: 22px; height: 22px; margin-left: -11px; margin-top: -11px;
+  }
+  @media (hover: none) { .cursor-glow, .cursor-ring { display: none; } }
+
+  main {
+    max-width: 1200px; margin: 0 auto;
+    padding: 56px 56px 160px;
+    position: relative; z-index: 3;
+  }
+
+  /* topbar */
+  .topbar {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 24px;
+    align-items: baseline;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--ink);
+    margin-bottom: 80px;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .topbar .mid {
+    font-style: normal; font-weight: 400;
+    text-transform: none; letter-spacing: 0; font-size: 14px;
+  }
+  .topbar .right { text-align: right; }
+  .topbar a { color: var(--ink); text-decoration: none; margin-left: 18px; }
+  .topbar a:hover { color: var(--accent); }
+
+  /* hero */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 56px;
+    margin-bottom: 120px;
+    align-items: end;
+  }
+  .hero h1 {
+    font-weight: 500;
+    font-style: normal;
+    font-size: clamp(48px, 8vw, 96px);
+    line-height: 0.86;
+    margin: 0;
+    letter-spacing: -0.04em;
+    text-transform: lowercase;
+  }
+  .hero h1 .it { font-weight: 300; }
+  .hero .right p {
+    font-size: 16px;
+    line-height: 1.4;
+    font-weight: 300;
+    margin: 0 0 20px;
+    max-width: 38ch;
+    text-wrap: pretty;
+  }
+  .hero .meta {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--dim);
+    display: flex; gap: 28px; flex-wrap: wrap;
+    margin-top: 28px;
+  }
+  .hero .meta a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule); padding-bottom: 2px; }
+  .hero .meta a:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* section heads */
+  .sec { margin-top: 96px; }
+  .sec-head {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 24px;
+    align-items: baseline;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--ink);
+    margin-bottom: 36px;
+  }
+  .sec-head .num {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--dim);
+  }
+  .sec-head .title {
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    text-align: center;
+    letter-spacing: 0.08em;
+  }
+  .sec-head .right {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--dim);
+    text-transform: uppercase;
+  }
+
+  /* experience */
+  .xp {
+    display: grid;
+    grid-template-columns: 200px 1fr 200px;
+    gap: 24px;
+    padding: 24px 0;
+    border-bottom: 1px solid var(--rule);
+    align-items: start;
+  }
+  .xp:last-child { border-bottom: none; }
+  .xp .when {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--dim);
+    padding-top: 8px;
+  }
+  .xp .role {
+    font-size: 18px;
+    line-height: 1.3;
+    font-weight: 500;
+    margin: 0 0 4px;
+    letter-spacing: 0;
+  }
+  .xp .org {
+    font-style: normal;
+    font-weight: 300;
+    font-size: 18px;
+    color: var(--dim);
+    margin-bottom: 10px;
+  }
+  .xp ul {
+    margin: 6px 0 0; padding-left: 18px;
+    font-size: 14.5px; line-height: 1.55;
+    max-width: 60ch;
+  }
+  .xp li { margin-bottom: 4px; }
+  .xp li b { font-weight: 600; color: var(--ink); }
+  .xp .where {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--dim);
+    padding-top: 8px;
+    text-align: right;
+  }
+
+  /* project cards */
+  .proj-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
+  }
+  .proj {
+    background: var(--paper);
+    padding: 28px 28px 24px;
+    border: 1px solid var(--rule);
+    position: relative;
+    transition: transform .25s, box-shadow .25s;
+  }
+  .proj:hover { transform: translateY(-2px); box-shadow: 0 12px 32px -16px rgba(0,0,0,0.18); }
+  .proj.feature { grid-column: 1 / -1; padding: 36px 36px 28px; }
+  .proj .pkn {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--dim);
+    margin-bottom: 12px;
+    display: flex; justify-content: space-between;
+  }
+  .proj h3 {
+    font-weight: 500;
+    font-size: 22px;
+    line-height: 1.05;
+    margin: 0 0 4px;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+  .proj.feature h3 { font-size: 28px; }
+  .proj h3 a { color: var(--ink); text-decoration: none; }
+  .proj h3 a:hover { color: var(--accent); }
+  .proj .stack {
+    font-style: normal;
+    font-weight: 300;
+    font-size: 16px;
+    color: var(--dim);
+    margin-bottom: 14px;
+  }
+  .proj ul {
+    margin: 8px 0 0; padding-left: 16px;
+    font-size: 14px; line-height: 1.6;
+  }
+  .proj li { margin-bottom: 4px; }
+  .proj li b { font-weight: 600; }
+
+  /* contact */
+  .contact {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 56px;
+    align-items: end;
+    padding: 24px 0 8px;
+  }
+  .contact .big {
+    font-weight: 400;
+    font-size: clamp(32px, 5vw, 56px);
+    line-height: 1.1;
+    margin: 0;
+    letter-spacing: -0.03em;
+  }
+  .contact .big .it { font-weight: 300; }
+  .contact dl {
+    margin: 0; padding: 0;
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: 12px 16px;
+    font-size: 13px;
+  }
+  .contact dt {
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 11px;
+    padding-top: 3px;
+  }
+  .contact dd { margin: 0; }
+  .contact dd a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule); }
+  .contact dd a:hover { border-color: var(--accent); color: var(--accent); }
+
+  footer {
+    margin-top: 80px;
+    padding-top: 14px;
+    border-top: 1px solid var(--ink);
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 24px; align-items: baseline;
+    font-size: 11px; letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--dim);
+  }
+  footer .mid {
+    font-style: normal;
+    text-transform: none; letter-spacing: 0; font-size: 14px; color: var(--ink);
+  }
+  footer .right { text-align: right; }
+
+  /* scroll-reveal */
+  .reveal { opacity: 0; transform: translateY(8px); transition: opacity .8s ease, transform .8s ease; }
+  .reveal.on { opacity: 1; transform: translateY(0); }
+
+  /* responsive */
+  @media (max-width: 768px) {
+    main { padding: 32px 24px 100px; }
+    .topbar { grid-template-columns: 1fr 1fr; }
+    .topbar .mid { display: none; }
+    .hero { grid-template-columns: 1fr; gap: 32px; margin-bottom: 72px; }
+    .xp { grid-template-columns: 1fr; gap: 8px; }
+    .xp .where { text-align: left; }
+    .proj-grid { grid-template-columns: 1fr; }
+    .proj.feature { grid-column: auto; }
+    .contact { grid-template-columns: 1fr; gap: 32px; }
+    footer { grid-template-columns: 1fr 1fr; }
+    footer .mid { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="cursor-glow" aria-hidden="true"></div>
+<div class="cursor-ring" aria-hidden="true"></div>
+
+<main>
+  <div class="topbar">
+    <div class="left">Ryder Pongracic — Atlanta, GA</div>
+    <div class="mid">vol. i</div>
+    <div class="right">
+      <a href="#xp">Work</a>
+      <a href="#proj">Projects</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </div>
+
+  <section class="hero">
+    <div class="left">
+      <h1>Ryder<br/><span class="it">Pongracic</span></h1>
+    </div>
+    <div class="right">
+      <p class="reveal">A computer scientist at <em>Georgia Tech</em>, building distributed systems, query engines, and graph-data tooling — pursuing a BS/MS with a focus in artificial intelligence.</p>
+      <p class="reveal">Incoming SDE intern at <em>Amazon FinTech</em> for summer 2026.</p>
+      <div class="meta reveal">
+        <span>Available — Summer '26</span>
+        <a href="https://github.com/ryderpongracic1" target="_blank" rel="noopener">GitHub ↗</a>
+        <a href="https://www.linkedin.com/in/rpongracic" target="_blank" rel="noopener">LinkedIn ↗</a>
+        <a href="mailto:ryderjmp@gmail.com">Email ↗</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="xp">
+    <div class="sec-head">
+      <span class="num">§ 01</span>
+      <span class="title">Work, in chronology</span>
+      <span class="right">Four roles</span>
+    </div>
+
+    <div class="xp reveal">
+      <div class="when">Jun 2026 — Aug 2026</div>
+      <div>
+        <h3 class="role">Software Development Engineer Intern</h3>
+        <div class="org">Amazon &nbsp;·&nbsp; FinTech Org</div>
+      </div>
+      <div class="where">Arlington, VA<br/>Incoming</div>
+    </div>
+
+    <div class="xp reveal">
+      <div class="when">Jan 2026 — Present</div>
+      <div>
+        <h3 class="role">Web Developer</h3>
+        <div class="org">Georgia Tech School of Physics</div>
+        <ul>
+          <li>Maintained continuous Drupal uptime &amp; tuned UX with responsive <b>HTML/CSS</b> for <b>59K+ monthly visitors</b>.</li>
+        </ul>
+      </div>
+      <div class="where">Atlanta, GA</div>
+    </div>
+
+    <div class="xp reveal">
+      <div class="when">Aug 2024 — Dec 2025</div>
+      <div>
+        <h3 class="role">Computational Researcher</h3>
+        <div class="org">Georgia Tech Bhamla Lab</div>
+        <ul>
+          <li>Engineered <b>MATLAB</b> stochastic simulations &amp; built Bluetooth <b>Arduino</b> robots to validate pairwise &amp; ternary herding control frameworks.</li>
+          <li>Designed financial simulations with <b>LangGraph LLM agents</b> &amp; <b>Pandas</b> applying herding dynamics to market traders.</li>
+        </ul>
+      </div>
+      <div class="where">Atlanta, GA</div>
+    </div>
+
+    <div class="xp reveal">
+      <div class="when">Jan 2024 — May 2024</div>
+      <div>
+        <h3 class="role">Computer Vision Researcher</h3>
+        <div class="org">Georgia Tech School of Civil Engineering</div>
+        <ul>
+          <li>Tuned a custom <b>High-Boost filter mask</b> &amp; baseline parameters, driving a <b>140%</b> increase in registration quality on street-crack models.</li>
+          <li>Architected image-interpolation techniques that recovered failed registrations from a 6-year 3D laser dataset — <b>500%</b> recall, <b>263%</b> precision.</li>
+        </ul>
+      </div>
+      <div class="where">Atlanta, GA</div>
+    </div>
+  </section>
+
+  <section class="sec" id="proj">
+    <div class="sec-head">
+      <span class="num">§ 02</span>
+      <span class="title">Selected projects</span>
+      <span class="right">Five works</span>
+    </div>
+
+    <div class="proj-grid">
+      <article class="proj feature reveal">
+        <div class="pkn"><span>Featured · Apr–May 2026</span><span>Go · gRPC · LSM · Raft</span></div>
+        <h3>Distributed Key-Value Store</h3>
+        <div class="stack">A strictly consistent CP system, hand-rolled in Go.</div>
+        <ul>
+          <li>Architected a <b>Golang</b> KV store navigating <b>CAP-theorem</b> tradeoffs as a strictly consistent <b>CP system</b>, with a <b>consistent hash ring</b> for partitioning &amp; replication.</li>
+          <li>Engineered an <b>LSM-Tree storage engine</b> with MemTables &amp; SSTables, using strict <b>Write-Ahead Logging</b> (CRC32 framing + fsync) for crash durability and write atomicity.</li>
+          <li>Implemented <b>Raft consensus</b> with a pre-vote phase &amp; heartbeat mechanism for resilient leader election &amp; failure detection across a gRPC-connected cluster.</li>
+        </ul>
+      </article>
+
+      <article class="proj reveal">
+        <div class="pkn"><span>Jan–May 2026</span><span>Go · SQL · Columnar</span></div>
+        <h3>vexq — Vectorized SQL Query Engine</h3>
+        <div class="stack">A complete analytical pipeline, in Go.</div>
+        <ul>
+          <li>Custom <b>.vxq</b> columnar format with per-row-group <b>zone maps</b>, dictionary-encoded strings, and CRC32 block integrity.</li>
+          <li>Vectorized <b>Volcano-model</b> engine, 1024-row L1-cached batches, a <b>Pratt SQL parser</b> &amp; predicate-pushdown optimizer — <b>4.5×</b> over SQLite on TPC-H 6M-row scans.</li>
+          <li>Morsel-driven parallelism with a lock-free partial-merge — additional <b>2.5×</b> on aggregates.</li>
+        </ul>
+      </article>
+
+      <article class="proj reveal">
+        <div class="pkn"><span>Aug 2025</span><span>Python · FastAPI · Gemini · NetworkX</span></div>
+        <h3>CodeScribe AI</h3>
+        <div class="stack">Hackathon-winning AI documentation tool.</div>
+        <ul>
+          <li>FastAPI backend parses Python codebases via the <b>AST module</b>, mapping structural context into a <b>NetworkX</b> dependency graph.</li>
+          <li>LLM APIs analyze the graph to generate context-aware documentation grounded in real call structure.</li>
+        </ul>
+      </article>
+
+      <article class="proj reveal">
+        <div class="pkn"><span>Sep 2025</span><span>Python · Neo4j · Cypher · GDS</span></div>
+        <h3><a href="https://github.com/ryderpongracic1/wikipedia-analysis" target="_blank" rel="noopener">Wikipedia Citation Network ↗</a></h3>
+        <div class="stack">7M articles, 1.2B links, in a graph DB.</div>
+        <ul>
+          <li>Streaming <b>lxml iterparse</b> ingest of <b>500GB+</b> Wikipedia XML — <b>7M+ articles</b>, <b>1.2B+ links</b> via <b>MERGE</b>-idempotent Cypher into Neo4j.</li>
+          <li><b>PageRank</b>, <b>Louvain</b>, BFS shortest-path via Neo4j GDS, exposed through a Flask REST API.</li>
+          <li>95-test pytest suite (unit / integration / benchmark), GitHub Actions CI across Py 3.9–3.11.</li>
+        </ul>
+      </article>
+
+      <article class="proj reveal">
+        <div class="pkn"><span>Jan 2026</span><span>C++ · OpenMP · PostGIS · Docker</span></div>
+        <h3>Wildfire Spread Simulator</h3>
+        <div class="stack">Cellular-automata fire physics, in C++.</div>
+        <ul>
+          <li>C++ engine running <b>Rothermel</b> equations on a CA grid — <b>11.6×</b> speedup via <b>OpenMP</b> parallelism.</li>
+          <li>Spatial pipeline querying USGS elevation &amp; LANDFIRE fuel data through <b>PostgreSQL/PostGIS</b>.</li>
+          <li>Fully Dockerized stack: Flask REST API + Leaflet.js frontend.</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <section class="sec" id="gallery">
+    <div class="sec-head">
+      <span class="num">§ 03</span>
+      <span class="title">gallery &amp; archive</span>
+      <span class="right">extras</span>
+    </div>
+
+    <div class="proj-grid">
+      <article class="proj reveal">
+        <div class="pkn"><span>volunteer · ongoing</span><span>backend · mobile</span></div>
+        <h3>pftng app — backend architecture</h3>
+        <div class="stack">volunteer developer.</div>
+        <ul>
+          <li>Spearheaded backend architecture and core features for PFTNG; designed a scalable server-side environment supporting the mobile app with reliable data flow, API integration, and system stability.</li>
+        </ul>
+      </article>
+
+      <article class="proj reveal">
+        <div class="pkn"><span>aiatl</span><span>unity · c#</span></div>
+        <h3>tori @ aiatl — unity developer</h3>
+        <div class="stack">interactive media + simulation.</div>
+        <ul>
+          <li>Developed interactive environments and core mechanics in <b>Unity / C#</b> in collaboration with AIATL — integrating intelligent behaviors, managing object states, and shipping an engaging user experience.</li>
+        </ul>
+      </article>
+
+      <article class="proj reveal">
+        <div class="pkn"><span>side · 2025</span><span>cloudflare workers · llm</span></div>
+        <h3>edge-optimized ai chatbot</h3>
+        <div class="stack">low-latency conversational ai.</div>
+        <ul>
+          <li>Engineered a low-latency conversational agent deployed on <b>Cloudflare Workers</b>, using a serverless fast-track architecture and external <b>LLM APIs</b> for globally distributed, sub-second response times.</li>
+        </ul>
+      </article>
+
+      <article class="proj reveal" style="grid-column: 1 / -1; padding: 24px 28px;">
+        <div class="pkn"><span>where it started · early projects</span><span>archive</span></div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 8px;">
+          <div>
+            <h3 style="font-size: 18px;">regressive underload</h3>
+            <div class="stack">a personal lifting-metrics utility.</div>
+            <ul><li>An early exploration into application logic &amp; state management — built to track and calculate lifting metrics and optimize my own gym routines.</li></ul>
+          </div>
+          <div>
+            <h3 style="font-size: 18px;">bible verse alarm clock</h3>
+            <div class="stack">scheduling logic, first foray.</div>
+            <ul><li>One of my foundational programming ventures: a custom alarm app that automated fetching and displaying daily scriptures.</li></ul>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="sec contact" id="contact">
+    <div class="sec-head" style="grid-column: 1 / -1;">
+      <span class="num">§ 04</span>
+      <span class="title">get in touch</span>
+      <span class="right">Atlanta, GA</span>
+    </div>
+    <p class="big reveal">Say <span class="it">hello</span>—<br/>I read every email.</p>
+    <dl class="reveal">
+      <dt>Email</dt><dd><a href="mailto:ryderjmp@gmail.com">ryderjmp@gmail.com</a></dd>
+      <dt>GitHub</dt><dd><a href="https://github.com/ryderpongracic1" target="_blank" rel="noopener">github.com/ryderpongracic1</a></dd>
+      <dt>LinkedIn</dt><dd><a href="https://www.linkedin.com/in/rpongracic" target="_blank" rel="noopener">linkedin.com/in/rpongracic</a></dd>
+      <dt>Based in</dt><dd>Atlanta, Georgia</dd>
+    </dl>
+  </section>
+
+  <footer>
+    <div>© 2026 Ryder Pongracic</div>
+    <div class="mid">— fin —</div>
+    <div class="right">Vol. I · Last updated May '26</div>
+  </footer>
+</main>
+
+<script>
+  // cursor spotlight + ring
+  const glow = document.querySelector('.cursor-glow');
+  const ring = document.querySelector('.cursor-ring');
+  let rx = window.innerWidth / 2, ry = window.innerHeight / 2;
+  let gx = rx, gy = ry;
+
+  window.addEventListener('pointermove', (e) => {
+    rx = e.clientX; ry = e.clientY;
+    ring.style.transform = `translate3d(${rx}px, ${ry}px, 0)`;
+  });
+
+  (function loop() {
+    gx += (rx - gx) * 0.12;
+    gy += (ry - gy) * 0.12;
+    glow.style.transform = `translate3d(${gx}px, ${gy}px, 0)`;
+    requestAnimationFrame(loop);
+  })();
+
+  // enlarge cursor ring on links
+  document.querySelectorAll('a, button').forEach(el => {
+    el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hot'));
+    el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hot'));
+  });
+
+  // scroll reveal
+  const io = new IntersectionObserver(
+    (entries) => entries.forEach(e => e.isIntersecting && e.target.classList.add('on')),
+    { threshold: 0.1 }
+  );
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+</body>
+</html>
