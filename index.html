@@ -34,7 +34,7 @@
   }
   @media (hover: none) { body { cursor: auto; } }
 
-  /* halftone bg — indigo + violet dots */
+  /* halftone bg */
   body::before {
     content: "";
     position: fixed; inset: 0;
@@ -58,10 +58,8 @@
     background: radial-gradient(circle, rgba(100,120,210,0.40) 0%, rgba(100,120,210,0.12) 35%, transparent 70%);
     mix-blend-mode: multiply;
     transform: translate3d(50vw, 50vh, 0);
-    transition: opacity 0.3s ease;
     opacity: 1;
   }
-  /* cursor dot */
   .cursor-ring {
     position: fixed; left: 0; top: 0;
     width: 10px; height: 10px;
@@ -80,9 +78,7 @@
     border-radius: 50%;
     opacity: 0.32;
   }
-  body.cursor-hot .cursor-ring {
-    width: 22px; height: 22px; margin-left: -11px; margin-top: -11px;
-  }
+  body.cursor-hot .cursor-ring { width: 22px; height: 22px; margin-left: -11px; margin-top: -11px; }
   @media (hover: none) { .cursor-glow, .cursor-ring { display: none; } }
 
   main {
@@ -160,7 +156,7 @@
   .sec-head .title { font-weight: 500; font-size: 14px; text-align: center; letter-spacing: 0.08em; }
   .sec-head .right { font-size: 11px; letter-spacing: 0.08em; color: var(--dim); text-transform: uppercase; }
 
-  /* experience */
+  /* experience / education rows */
   .xp {
     display: grid;
     grid-template-columns: 200px 1fr 200px;
@@ -173,10 +169,22 @@
   .xp .when { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim); padding-top: 8px; }
   .xp .role { font-size: 18px; line-height: 1.3; font-weight: 500; margin: 0 0 4px; letter-spacing: 0; }
   .xp .org { font-weight: 300; font-size: 18px; color: var(--dim); margin-bottom: 10px; }
+  .xp .org a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--rule); }
+  .xp .org a:hover { color: var(--accent); border-color: var(--accent); }
   .xp ul { margin: 6px 0 0; padding-left: 18px; font-size: 14px; line-height: 1.6; max-width: 62ch; }
   .xp li { margin-bottom: 5px; }
   .xp li b { font-weight: 600; color: var(--ink); }
+  .xp li > ul { margin-top: 4px; }
+  .xp li > ul > li { color: var(--dim); margin-bottom: 3px; }
   .xp .where { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim); padding-top: 8px; text-align: right; }
+  /* GPA badge */
+  .gpa {
+    display: inline-block;
+    font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;
+    background: rgba(45,58,140,0.09); color: var(--accent);
+    padding: 2px 7px; border-radius: 2px; margin-left: 10px;
+    font-weight: 500; vertical-align: middle;
+  }
 
   /* project cards */
   .proj-grid {
@@ -205,22 +213,18 @@
   .proj.feature h3 { font-size: 28px; }
   .proj h3 a { color: var(--ink); text-decoration: none; }
   .proj h3 a:hover { color: var(--accent); }
+  .proj h3 .aux { font-size: 13px; font-weight: 300; margin-left: 10px; opacity: 0.7; }
   .proj .stack { font-weight: 300; font-size: 15px; color: var(--dim); margin-bottom: 14px; }
   .proj ul { margin: 8px 0 0; padding-left: 16px; font-size: 13.5px; line-height: 1.65; }
   .proj li { margin-bottom: 5px; }
   .proj li b { font-weight: 600; }
-  /* stat callout — small inline highlight for a key metric */
+  .proj li > ul { margin-top: 4px; }
+  .proj li > ul > li { color: var(--dim); font-size: 0.95em; margin-bottom: 3px; }
   .proj .stat {
     display: inline-block;
-    background: rgba(45,58,140,0.09);
-    color: var(--accent);
-    font-size: 11px;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    padding: 2px 7px;
-    border-radius: 2px;
-    margin-left: 4px;
-    font-weight: 500;
+    background: rgba(45,58,140,0.09); color: var(--accent);
+    font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase;
+    padding: 2px 7px; border-radius: 2px; margin-left: 4px; font-weight: 500;
   }
 
   /* contact */
@@ -289,8 +293,9 @@
     <div class="mid">vol. i</div>
     <div class="right">
       <a href="#xp">Work</a>
+      <a href="#edu">Education</a>
       <a href="#proj">Projects</a>
-      <a href="#gallery">Gallery</a>
+      <a href="#archive">Archive</a>
       <a href="#contact">Contact</a>
     </div>
   </div>
@@ -300,10 +305,10 @@
       <h1>Ryder<br/><span class="it">Pongracic</span></h1>
     </div>
     <div class="right">
-      <p class="reveal">A computer scientist at <em>Georgia Tech</em> pursuing a BS/MS with a focus in artificial intelligence — building distributed systems, query engines, and graph-data tooling from the ground up.</p>
-      <p class="reveal">Incoming SDE intern at <em>Amazon FinTech</em> for summer 2026. I work best at the intersection of low-level systems engineering and large-scale data problems.</p>
+      <p class="reveal">A computer scientist at <em>Georgia Tech</em> — building distributed systems, query engines, and graph-data tooling from the ground up. I work at the intersection of low-level storage engineering and large-scale data problems.</p>
+      <p class="reveal">Incoming SDE intern at <em>Amazon FinTech</em> this summer, then back to finish my MS. Always interested in hard engineering problems.</p>
       <div class="meta reveal">
-        <span>Available — Summer '26</span>
+        <span>Available — Fall '26</span>
         <a href="https://github.com/ryderpongracic1" target="_blank" rel="noopener">GitHub ↗</a>
         <a href="https://www.linkedin.com/in/rpongracic" target="_blank" rel="noopener">LinkedIn ↗</a>
         <a href="mailto:ryderjmp@gmail.com">Email ↗</a>
@@ -325,7 +330,7 @@
         <h3 class="role">Software Development Engineer Intern</h3>
         <div class="org">Amazon &nbsp;·&nbsp; FinTech Org</div>
         <ul>
-          <li>Joining the FinTech org in Arlington, VA — building financial infrastructure at Amazon scale.</li>
+          <li>Joining the <b>Asset Review Management</b> (ARM) team, <b>Fixed Asset Automation</b> (FAA) vertical — building automated financial infrastructure at Amazon scale.</li>
         </ul>
       </div>
       <div class="where">Arlington, VA<br/>Incoming</div>
@@ -335,7 +340,7 @@
       <div class="when">Jan 2026 — Present</div>
       <div>
         <h3 class="role">Web Developer</h3>
-        <div class="org">Georgia Tech School of Physics</div>
+        <div class="org"><a href="https://physics.gatech.edu/" target="_blank" rel="noopener">Georgia Tech School of Physics</a></div>
         <ul>
           <li>Maintain the School of Physics digital platform — ensuring continuous Drupal uptime and stability for <b>59K+ monthly visitors</b>.</li>
           <li>Continuously audit and ship responsive <b>HTML/CSS</b> frontend features, with UX decisions driven by a <b>70% mobile-dominated</b> visitor audience.</li>
@@ -350,8 +355,13 @@
         <h3 class="role">Computational Researcher</h3>
         <div class="org">Georgia Tech Bhamla Lab</div>
         <ul>
-          <li>Engineered <b>MATLAB</b> stochastic simulations using <b>Gillespie algorithms</b> to mathematically model pairwise and ternary herding control frameworks; built Bluetooth <b>Arduino</b> robots from scratch to physically validate the theoretical systems — overcame hardware limits by inventing a spatial calibration method that derives position entirely from <b>motor RPMs</b>, eliminating the need for any external tracking module.</li>
-          <li>Expanded research scope by designing financial market simulations with <b>LangGraph LLM agents</b> and <b>Pandas</b>, successfully applying herding dynamics to model trend-followers and copy-traders.</li>
+          <li>Engineered <b>MATLAB</b> stochastic simulations using <b>Gillespie algorithms</b> — modeled pairwise &amp; ternary herding control frameworks</li>
+          <li>Built Bluetooth <b>Arduino</b> robots from scratch to physically validate the theoretical systems
+            <ul>
+              <li>Custom spatial calibration method derived position entirely from <b>motor RPMs</b> — no external tracking hardware required</li>
+            </ul>
+          </li>
+          <li>Designed financial market simulations using <b>LangGraph LLM agents</b> &amp; <b>Pandas</b> — applied herding dynamics to trend-followers and copy-traders</li>
         </ul>
       </div>
       <div class="where">Atlanta, GA</div>
@@ -363,18 +373,61 @@
         <h3 class="role">Computer Vision Researcher</h3>
         <div class="org">Georgia Tech School of Civil Engineering</div>
         <ul>
-          <li>Processing a <b>6-year temporal dataset</b> of 3D laser range images tracking street crack propagation, standard image registration metrics frequently failed due to physical crack growth over time. Engineered a custom <b>High-Boost filter mask</b>, tuning Alpha/Beta parameters to balance execution cost against output quality — driving a <b>140% increase</b> in baseline registration quality.</li>
-          <li>Architected Square and Vertical <b>image interpolation techniques</b> to dynamically salvage failed homography matrices — yielding a <b>500% increase in recall</b> (Intersection of Source) and a <b>263% increase in precision</b> (Intersection of Prediction) across the full dataset.</li>
+          <li><b>6-year temporal dataset</b> of 3D laser range images — tracking street crack propagation where standard registration metrics frequently fail due to physical crack growth
+            <ul>
+              <li>Engineered a custom <b>High-Boost filter mask</b>; tuned Alpha/Beta parameters to balance execution cost vs. output — <b>140% increase</b> in baseline registration quality</li>
+            </ul>
+          </li>
+          <li>Architected Square &amp; Vertical <b>image interpolation techniques</b> to salvage failed homography matrices
+            <ul>
+              <li><b>500% increase in recall</b> (Intersection of Source)</li>
+              <li><b>263% increase in precision</b> (Intersection of Prediction)</li>
+            </ul>
+          </li>
         </ul>
       </div>
       <div class="where">Atlanta, GA</div>
     </div>
   </section>
 
-  <!-- ─── § 02  Projects ─────────────────────────────────────────── -->
-  <section class="sec" id="proj">
+  <!-- ─── § 02  Education ────────────────────────────────────────── -->
+  <section class="sec" id="edu">
     <div class="sec-head">
       <span class="num">§ 02</span>
+      <span class="title">Education</span>
+      <span class="right">Georgia Tech</span>
+    </div>
+
+    <div class="xp reveal">
+      <div class="when">Jan 2027 — May 2028</div>
+      <div>
+        <h3 class="role">Master of Science in Computer Science</h3>
+        <div class="org">Georgia Institute of Technology</div>
+        <ul>
+          <li>Specialization: <b>Artificial Intelligence</b></li>
+        </ul>
+      </div>
+      <div class="where">Atlanta, GA</div>
+    </div>
+
+    <div class="xp reveal">
+      <div class="when">Jun 2023 — Dec 2026</div>
+      <div>
+        <h3 class="role">Bachelor of Science in Computer Science <span class="gpa">3.86 / 4.0</span></h3>
+        <div class="org">Georgia Institute of Technology</div>
+        <ul>
+          <li>Concentrations: <b>Intelligence</b> &amp; <b>People</b> (HCI)</li>
+          <li>Coursework: Machine Learning, Artificial Intelligence, Algorithm Design &amp; Analysis, Data Structures &amp; Algorithms, OOP, Computer Organization &amp; Programming, Linear Algebra, Combinatorics, Probability &amp; Statistics, Robotics &amp; Perception</li>
+        </ul>
+      </div>
+      <div class="where">Atlanta, GA</div>
+    </div>
+  </section>
+
+  <!-- ─── § 03  Projects ─────────────────────────────────────────── -->
+  <section class="sec" id="proj">
+    <div class="sec-head">
+      <span class="num">§ 03</span>
       <span class="title">Selected projects</span>
       <span class="right">Five works</span>
     </div>
@@ -390,10 +443,30 @@
         <h3><a href="https://github.com/ryderpongracic1/distrikv" target="_blank" rel="noopener">distrikv — Distributed Key-Value Store ↗</a></h3>
         <div class="stack">A production-quality, strictly consistent CP system — hand-rolled in Go.</div>
         <ul>
-          <li><b>Consistent Hash Ring</b> — each physical node holds 150 virtual positions on a uint32 ring; keys are placed by hashing MD5(key)[0:4] and walking clockwise. <code>GetN(key, R)</code> returns R <em>distinct</em> physical nodes, explicitly skipping duplicate physical hosts — the naive "next N vnodes" approach fails here and produces hot replicas.</li>
-          <li><b>LSM-Tree storage engine</b> — writes land in a sorted, RWMutex-protected MemTable (btree.BTreeG), freeze into an immutable buffer, and flush to SSTables on disk. <b>Bloom filters</b> (FNV-1a) skip SSTables on point reads, bounding read amplification; <b>background compaction</b> merges levels to keep read costs in check.</li>
-          <li><b>Write-Ahead Logging</b> — CRC32 framing + fsync on every append; replay logic handles truncated entries safely on crash recovery. Atomic state persistence uses write-to-temp + Sync + os.Rename — no partial files, ever.</li>
-          <li><b>Raft consensus</b> — full implementation with a pre-vote phase and heartbeat mechanism for resilient leader election; <b>InstallSnapshot</b> transfers binary state to lagging followers over gRPC. Ships with a first-class <b>distrikv-cli</b> (Cobra, injected AppContext, zero global state) and Docker Compose cluster.</li>
+          <li><b>Consistent Hash Ring</b> — 150 virtual positions per physical node on a uint32 ring
+            <ul>
+              <li>Keys placed via MD5(key)[0:4] → uint32, walk clockwise to nearest vnode</li>
+              <li><code>GetN(key, R)</code> returns R <em>distinct</em> physical nodes — explicitly skips duplicate physical hosts</li>
+            </ul>
+          </li>
+          <li><b>LSM-Tree storage engine</b>
+            <ul>
+              <li>Writes: MemTable (sorted btree.BTreeG, RWMutex) → immutable buffer → SSTable flush</li>
+              <li><b>Bloom filters</b> (FNV-1a) skip SSTables on point reads; background compaction merges levels to bound read amplification</li>
+            </ul>
+          </li>
+          <li><b>Write-Ahead Logging</b> — CRC32 framing + fsync on every append
+            <ul>
+              <li>Truncated-entry replay-safe on crash recovery</li>
+              <li>Atomic state persistence: write-to-temp + Sync + os.Rename — no partial files, ever</li>
+            </ul>
+          </li>
+          <li><b>Raft consensus</b> — pre-vote phase + heartbeat for resilient leader election
+            <ul>
+              <li><b>InstallSnapshot</b> transfers binary state to lagging followers over gRPC</li>
+              <li>Ships with <b>distrikv-cli</b> (Cobra, injected AppContext, zero global state) and Docker Compose cluster</li>
+            </ul>
+          </li>
         </ul>
       </article>
 
@@ -403,20 +476,49 @@
         <h3><a href="https://github.com/ryderpongracic1/vexq" target="_blank" rel="noopener">vexq — Vectorized SQL Query Engine ↗</a></h3>
         <div class="stack">A complete analytical query pipeline, written from scratch in Go.</div>
         <ul>
-          <li><b>Custom .vxq format</b> — file header → row groups (65,536 rows) → footer; 1,024-row blocks with 128-byte null bitmap + typed payload + CRC32. Strings are always <b>dictionary-encoded</b> per row group, reducing equality checks to integer comparison in the filter hot path. <b>Zone maps</b> store per-row-group min/max/nullcount so entire row groups are skipped before any block I/O.</li>
-          <li><b>Vectorized Volcano engine</b> — Filter uses selection vectors with zero allocations on the hot path; <b>Pratt SQL parser</b> (recursive-descent) feeds a predicate-pushdown + column-pruning optimizer. Result: <b>4.5× over SQLite</b> on TPC-H Q1/Q3/Q6/Q12 at 6M rows.<span class="stat">4.5× SQLite</span></li>
-          <li><b>Morsel-driven parallelism</b> — row groups fan out across goroutines, merged by a lock-free partial HashAggregate — an additional <b>2.5× on aggregate queries</b>.<span class="stat">+2.5× on agg</span></li>
+          <li><b>Custom .vxq columnar format</b>
+            <ul>
+              <li>File header → row groups (65,536 rows) → footer; 1,024-row blocks with null bitmap + typed payload + CRC32</li>
+              <li>Strings always <b>dictionary-encoded</b> per row group — equality checks become integer comparison in the filter hot path</li>
+              <li><b>Zone maps</b> (min/max/nullcount) skip entire row groups before any block I/O</li>
+            </ul>
+          </li>
+          <li><b>Vectorized Volcano execution engine</b> — Filter uses selection vectors, zero allocations on the hot path
+            <ul>
+              <li><b>Pratt SQL parser</b> (recursive-descent) → predicate-pushdown + column-pruning optimizer</li>
+              <li><b>4.5× over SQLite</b> on TPC-H Q1/Q3/Q6/Q12 at 6M rows<span class="stat">4.5× SQLite</span></li>
+            </ul>
+          </li>
+          <li><b>Morsel-driven parallelism</b> — row groups fan out across goroutines
+            <ul>
+              <li>Lock-free partial HashAggregate merge — additional <b>2.5× on aggregate queries</b><span class="stat">+2.5× on agg</span></li>
+            </ul>
+          </li>
         </ul>
       </article>
 
       <!-- CodeScribe AI -->
       <article class="proj reveal">
         <div class="pkn"><span>Aug 2025</span><span>Python · FastAPI · Gemini · Groq · NetworkX</span></div>
-        <h3>CodeScribe AI</h3>
-        <div class="stack">Hackathon-winning AI documentation tool — first-place finish.</div>
+        <h3>
+          <a href="https://github.com/ryderpongracic1/CodeScribe" target="_blank" rel="noopener">CodeScribe AI ↗</a>
+          <a href="https://devpost.com/software/team-yugoslavia" target="_blank" rel="noopener" class="aux">devpost ↗</a>
+        </h3>
+        <div class="stack">Best AI Hack winner · AI repository &amp; code documentation tool.</div>
         <ul>
-          <li>FastAPI backend + <b>multi-LLM</b> (Groq/Llama-3 + Google Gemini) with intelligent key-rotation failover; dual input via <b>GitHub OAuth2</b> repo fetch or ZIP upload; pushes a documented branch to origin and provides a direct PR link.</li>
-          <li>Four-phase pipeline: scan → <b>AST dependency analysis</b> (Python ast module + NetworkX topological sort, ensuring base modules are documented first for downstream context) → per-file docstring generation → <b>bottom-up README synthesis</b> from leaf directory to project root. Real-time SSE progress streaming to the frontend.</li>
+          <li>FastAPI backend + <b>multi-LLM</b> (Groq/Llama-3 + Google Gemini) with intelligent key-rotation failover
+            <ul>
+              <li>Dual input: <b>GitHub OAuth2</b> repo fetch or ZIP upload</li>
+              <li>Pushes documented branch to origin with a direct PR link</li>
+            </ul>
+          </li>
+          <li>Four-phase pipeline: scan → AST analysis → docstring generation → README synthesis
+            <ul>
+              <li>Python <b>ast</b> module + <b>NetworkX</b> topological sort — base modules documented first for downstream context</li>
+              <li>Bottom-up README synthesis from leaf directory to project root</li>
+              <li>Real-time <b>SSE</b> progress streaming to the frontend</li>
+            </ul>
+          </li>
         </ul>
       </article>
 
@@ -426,72 +528,104 @@
         <h3><a href="https://github.com/ryderpongracic1/wikipedia-analysis" target="_blank" rel="noopener">Wikipedia Citation Network ↗</a></h3>
         <div class="stack">7M articles · 1.2B links · in a graph DB.</div>
         <ul>
-          <li>Streaming <b>lxml iterparse</b> ingest of <b>500GB+</b> Wikipedia XML dumps — <b>7M+ articles</b> and <b>1.2B+ links</b> loaded via MERGE-idempotent Cypher transactions into Neo4j, making the pipeline safely restartable.</li>
-          <li>Graph algorithms at scale via <b>Neo4j GDS</b>: PageRank for structural influence, Louvain community detection, Dijkstra/BFS for shortest knowledge paths between subjects — all exposed through a Flask REST API.</li>
-          <li>95-test pytest suite (unit / integration / benchmark), automated via <b>GitHub Actions CI</b> across Python 3.9–3.11 with a Neo4j service container.</li>
+          <li>Streaming <b>lxml iterparse</b> ingest of <b>500GB+</b> Wikipedia XML dumps
+            <ul>
+              <li><b>7M+ articles</b> and <b>1.2B+ links</b> via MERGE-idempotent Cypher into Neo4j — safely restartable</li>
+            </ul>
+          </li>
+          <li>Graph algorithms at scale via <b>Neo4j GDS</b>
+            <ul>
+              <li>PageRank — structural influence scoring</li>
+              <li>Louvain — community detection and clustering</li>
+              <li>Dijkstra / BFS — shortest knowledge paths between subjects</li>
+              <li>Exposed through a <b>Flask REST API</b></li>
+            </ul>
+          </li>
+          <li>95-test <b>pytest</b> suite (unit / integration / benchmark)
+            <ul>
+              <li><b>GitHub Actions CI</b> across Python 3.9–3.11 with a Neo4j service container</li>
+            </ul>
+          </li>
         </ul>
       </article>
 
       <!-- Wildfire -->
       <article class="proj reveal">
         <div class="pkn"><span>Jan 2026</span><span>C++17 · OpenMP · PostGIS · Docker · Leaflet.js</span></div>
-        <h3>Wildfire Spread Simulator</h3>
+        <h3><a href="https://github.com/ryderpongracic1/wildfire-simulator" target="_blank" rel="noopener">Wildfire Spread Simulator ↗</a></h3>
         <div class="stack">Rothermel fire physics on a geospatial cellular automaton — in C++.</div>
         <ul>
-          <li>C++17 simulation engine executing <b>Rothermel fire spread equations</b> across a geospatial CA grid; <b>OpenMP</b> parallelism across all CPU cores reduced a <b>2-hour</b> simulation to <b>under 3 seconds</b> — an <b>11.6× speedup</b>.<span class="stat">120 min → &lt;3 sec</span></li>
-          <li>Spatial data pipeline: <b>PostgreSQL/PostGIS</b> stores and queries real-world USGS elevation and LANDFIRE fuel-type data; served through a fully <b>Dockerized</b> Flask REST API with a Leaflet.js interactive map frontend.</li>
+          <li>C++17 simulation engine — <b>Rothermel fire spread equations</b> on a geospatial CA grid
+            <ul>
+              <li><b>OpenMP</b> parallelism: 2-hour simulation → <b>under 3 seconds</b> — <b>11.6× speedup</b><span class="stat">120 min → &lt;3 sec</span></li>
+            </ul>
+          </li>
+          <li>Spatial data pipeline: <b>PostgreSQL/PostGIS</b> for USGS elevation &amp; LANDFIRE fuel-type data
+            <ul>
+              <li>Fully <b>Dockerized</b>: Flask REST API + Leaflet.js interactive map frontend</li>
+            </ul>
+          </li>
         </ul>
       </article>
 
     </div>
   </section>
 
-  <!-- ─── § 03  Gallery & Archive ───────────────────────────────── -->
-  <section class="sec" id="gallery">
+  <!-- ─── § 04  Archive ─────────────────────────────────────────── -->
+  <section class="sec" id="archive">
     <div class="sec-head">
-      <span class="num">§ 03</span>
-      <span class="title">gallery &amp; archive</span>
+      <span class="num">§ 04</span>
+      <span class="title">Archive</span>
       <span class="right">extras</span>
     </div>
 
     <div class="proj-grid">
 
       <article class="proj reveal">
-        <div class="pkn"><span>volunteer · ongoing</span><span>Ionic · React · Capacitor · Firebase</span></div>
-        <h3>PFTNG — Mobile App</h3>
-        <div class="stack">Lead volunteer developer for a Christian non-profit.</div>
+        <div class="pkn"><span>volunteer</span><span>Ionic · React · Capacitor · Firebase</span></div>
+        <h3><a href="https://pftng.org/" target="_blank" rel="noopener">Praying for the Next Generation ↗</a></h3>
+        <div class="stack">Volunteer developer — Christian non-profit mobile platform.</div>
         <ul>
-          <li>Took full ownership of the app lifecycle — from <b>Figma UI/UX design</b> to backend architecture — building a platform to enhance community engagement for an organization without internal technical infrastructure.</li>
-          <li>Engineered the <b>Firebase</b> backend: established secure <b>OAuth authentication</b> protocols and structured a scalable <b>NoSQL database</b> foundation designed for future user growth; built on Ionic + React + Capacitor for cross-platform mobile deployment.</li>
+          <li>Collaborated with a team of volunteers building a community mobile app for a Christian non-profit — contributed to core app components and owned the entire backend
+            <ul>
+              <li>Designed intuitive, accessible UI pages tailored to the organization's target demographic</li>
+            </ul>
+          </li>
+          <li><b>Firebase</b> backend — secure <b>OAuth authentication</b> &amp; scalable <b>NoSQL database</b> foundation
+            <ul>
+              <li>Built on Ionic + React + Capacitor for cross-platform mobile deployment</li>
+            </ul>
+          </li>
         </ul>
       </article>
 
       <article class="proj reveal">
         <div class="pkn"><span>aiatl hackathon</span><span>Unity · C# · VR · React Native Expo</span></div>
-        <h3>TORI — VR Tour Guide @ AIATL</h3>
+        <h3><a href="https://github.com/ssantra616/TORI" target="_blank" rel="noopener">TORI — VR Tour Guide @ AIATL ↗</a></h3>
         <div class="stack">A VR architectural retrospective — and a foundational lesson.</div>
         <ul>
           <li>Built a functional <b>Unity / C#</b> VR projection of an architectural tour guide within hackathon time constraints, integrating intelligent navigation behaviors and object state management.</li>
-          <li>Discovered late in the cycle that the team's React Native Web frontend couldn't natively support the Unity VR integration — a critical cross-platform bottleneck. The failure cemented a core principle: <b>verify full-stack compatibility before committing to isolated tech stacks</b>.</li>
+          <li>Discovered late that the team's React Native Web frontend couldn't natively support Unity VR integration — cemented a core principle: <b>verify full-stack compatibility before committing to isolated tech stacks</b>.</li>
         </ul>
       </article>
 
       <article class="proj reveal">
         <div class="pkn"><span>hackalytics 2026</span><span>FastAPI · SQLAlchemy · React · TypeScript · Docker</span></div>
-        <h3>SafeTransit</h3>
+        <h3><a href="https://github.com/andomo3/hackalytics2026" target="_blank" rel="noopener">SafeTransit ↗</a></h3>
         <div class="stack">Predictive crowd safety analytics for live events.</div>
         <ul>
           <li>Full-stack hackathon project modeling crowd safety conditions at Seattle Lumen Field — FastAPI + SQLAlchemy backend with a <b>React/Vite/TypeScript</b> frontend, fully orchestrated via <b>Docker Compose</b>.</li>
-          <li>Built predictive models for real-time crowd density and safety thresholds, served through a REST API to a Figma-derived dashboard UI.</li>
+          <li>Predictive models for real-time crowd density and safety thresholds, served through a REST API to a Figma-derived dashboard UI.</li>
         </ul>
       </article>
 
       <article class="proj reveal">
         <div class="pkn"><span>side · 2025</span><span>Cloudflare Workers · LLM APIs</span></div>
-        <h3>Edge-Optimized AI Chatbot</h3>
+        <h3><a href="https://github.com/ryderpongracic1/cf_ai_chatbot" target="_blank" rel="noopener">Edge-Optimized AI Chatbot ↗</a></h3>
         <div class="stack">Low-latency conversational AI at the edge.</div>
         <ul>
-          <li>Engineered a conversational agent deployed on <b>Cloudflare Workers</b> — serverless, globally distributed, with sub-second response times via external LLM APIs and a fast-track edge architecture.</li>
+          <li>Built to sharpen edge-deployment skills during internship recruiting — a conversational agent on <b>Cloudflare Workers</b> integrating external LLM APIs for globally distributed, low-latency responses</li>
+          <li>Serverless architecture with zero cold-start overhead; demonstrates Workers' viability for stateful-adjacent AI workloads</li>
         </ul>
       </article>
 
@@ -500,14 +634,17 @@
         <div class="pkn"><span>where it started · early projects</span><span>archive</span></div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 8px;">
           <div>
-            <h3 style="font-size: 18px;">Regressive Underload</h3>
+            <h3 style="font-size: 18px;">
+              <a href="https://regressive-underload.web.app/" target="_blank" rel="noopener">Regressive Underload ↗</a>
+              <a href="https://github.com/ryderpongracic1/regressive-underload" target="_blank" rel="noopener" class="aux">GitHub ↗</a>
+            </h3>
             <div class="stack">a personal lifting-metrics utility.</div>
-            <ul><li>An early deep-dive into application logic and state management — built to track, calculate, and optimize personal gym training data. The project that got me hooked on software.</li></ul>
+            <ul><li>An early deep-dive into application logic and state management — built to track, calculate, and optimize personal gym training data.</li></ul>
           </div>
           <div>
-            <h3 style="font-size: 18px;">Bible Verse Alarm Clock</h3>
+            <h3 style="font-size: 18px;"><a href="https://github.com/ryderpongracic1/bible-verse-alarm-clock" target="_blank" rel="noopener">Bible Verse Alarm Clock ↗</a></h3>
             <div class="stack">React Native · Bible API · iOS audio.</div>
-            <ul><li>A custom alarm app that requires typing a Bible verse to dismiss — real-time character validation, verse API integration, offline fallback, and continuous iOS background audio playback. One of my first shipped mobile experiences.</li></ul>
+            <ul><li>A custom alarm that requires typing a Bible verse to dismiss — real-time character validation, verse API integration with offline fallback, and continuous iOS background audio playback.</li></ul>
           </div>
         </div>
       </article>
@@ -515,10 +652,10 @@
     </div>
   </section>
 
-  <!-- ─── § 04  Contact ──────────────────────────────────────────── -->
+  <!-- ─── § 05  Contact ──────────────────────────────────────────── -->
   <section class="sec contact" id="contact">
     <div class="sec-head" style="grid-column: 1 / -1;">
-      <span class="num">§ 04</span>
+      <span class="num">§ 05</span>
       <span class="title">get in touch</span>
       <span class="right">Atlanta, GA</span>
     </div>
@@ -539,7 +676,6 @@
 </main>
 
 <script>
-  // cursor spotlight + ring
   const glow = document.querySelector('.cursor-glow');
   const ring = document.querySelector('.cursor-ring');
   let rx = window.innerWidth / 2, ry = window.innerHeight / 2;
@@ -562,7 +698,6 @@
     el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hot'));
   });
 
-  // scroll reveal
   const io = new IntersectionObserver(
     (entries) => entries.forEach(e => e.isIntersecting && e.target.classList.add('on')),
     { threshold: 0.08 }
