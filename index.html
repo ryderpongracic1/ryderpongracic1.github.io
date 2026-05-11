@@ -148,6 +148,14 @@
   }
   .hero .meta a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule); padding-bottom: 2px; }
   .hero .meta a:hover { border-color: var(--accent); color: var(--accent); }
+  .hero .meta-break { flex-basis: 100%; height: 0; }
+  .hero .meta .meta-btn {
+    appearance: none; -webkit-appearance: none;
+    background: none; border: none; padding: 0 0 2px; margin: 0;
+    font: inherit; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--ink); cursor: none; border-bottom: 1px solid var(--rule);
+  }
+  .hero .meta .meta-btn:hover { border-color: var(--accent); color: var(--accent); }
 
   /* section heads */
   .sec { margin-top: 96px; }
@@ -329,6 +337,9 @@
       <p class="reveal">Incoming SDE intern at <em>Amazon FinTech</em> this summer, then back to finish my MS. Always interested in hard engineering problems.</p>
       <div class="meta reveal">
         <span>Available — Fall '26</span>
+        <a href="resume.pdf" download>Resume ↓</a>
+        <button class="meta-btn" onclick="window.print()">Portfolio PDF ↓</button>
+        <span class="meta-break"></span>
         <a href="https://github.com/ryderpongracic1" target="_blank" rel="noopener">GitHub ↗</a>
         <a href="https://www.linkedin.com/in/rpongracic" target="_blank" rel="noopener">LinkedIn ↗</a>
         <a href="mailto:ryderjmp@gmail.com">Email ↗</a>
