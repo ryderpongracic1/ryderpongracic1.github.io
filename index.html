@@ -104,6 +104,14 @@
   .topbar .right { text-align: right; }
   .topbar a { color: var(--ink); text-decoration: none; margin-left: 18px; }
   .topbar a:hover { color: var(--accent); }
+  .topbar .tb-sep { color: var(--rule); margin-left: 18px; user-select: none; }
+  .topbar .tb-btn {
+    appearance: none; -webkit-appearance: none;
+    background: none; border: none; padding: 0; margin: 0 0 0 18px;
+    font: inherit; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--ink); cursor: none;
+  }
+  .topbar .tb-btn:hover { color: var(--accent); }
 
   /* hero */
   .hero {
@@ -267,6 +275,18 @@
   .reveal { opacity: 0; transform: translateY(8px); transition: opacity .8s ease, transform .8s ease; }
   .reveal.on { opacity: 1; transform: translateY(0); }
 
+  /* print / PDF export */
+  @media print {
+    body::before, .cursor-glow, .cursor-ring { display: none !important; }
+    body { cursor: auto; background: #f8f5ee; }
+    .topbar .right { display: none; }
+    main { padding: 24px 32px 48px; }
+    .xp { break-inside: avoid; }
+    .proj { break-inside: avoid; }
+    .sec { break-inside: avoid; }
+    .reveal { opacity: 1 !important; transform: none !important; }
+  }
+
   /* responsive */
   @media (max-width: 768px) {
     main { padding: 32px 24px 100px; }
@@ -297,6 +317,9 @@
       <a href="#proj">Projects</a>
       <a href="#archive">Archive</a>
       <a href="#contact">Contact</a>
+      <span class="tb-sep" aria-hidden="true">·</span>
+      <a href="resume.pdf" download>Resume ↓</a>
+      <button class="tb-btn" onclick="window.print()">PDF ↓</button>
     </div>
   </div>
 
