@@ -104,14 +104,14 @@
   .topbar .right { text-align: right; }
   .topbar a { color: var(--ink); text-decoration: none; margin-left: 18px; }
   .topbar a:hover { color: var(--accent); }
-  .topbar .tb-sep { color: var(--rule); margin-left: 18px; user-select: none; }
-  .topbar .tb-btn {
+  /* print button in contact section */
+  .contact .print-btn {
     appearance: none; -webkit-appearance: none;
-    background: none; border: none; padding: 0; margin: 0 0 0 18px;
-    font: inherit; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
-    color: var(--ink); cursor: none;
+    background: none; border: none; padding: 0; margin: 0;
+    font: inherit; font-size: 13px; color: var(--ink); cursor: none;
+    text-transform: lowercase; border-bottom: 1px solid var(--rule);
   }
-  .topbar .tb-btn:hover { color: var(--accent); }
+  .contact .print-btn:hover { border-color: var(--accent); color: var(--accent); }
 
   /* hero */
   .hero {
@@ -317,9 +317,6 @@
       <a href="#proj">Projects</a>
       <a href="#archive">Archive</a>
       <a href="#contact">Contact</a>
-      <span class="tb-sep" aria-hidden="true">·</span>
-      <a href="resume.pdf" download>Resume ↓</a>
-      <button class="tb-btn" onclick="window.print()">PDF ↓</button>
     </div>
   </div>
 
@@ -688,6 +685,8 @@
       <dt>GitHub</dt><dd><a href="https://github.com/ryderpongracic1" target="_blank" rel="noopener">github.com/ryderpongracic1</a></dd>
       <dt>LinkedIn</dt><dd><a href="https://www.linkedin.com/in/rpongracic" target="_blank" rel="noopener">linkedin.com/in/rpongracic</a></dd>
       <dt>Based in</dt><dd>Atlanta, Georgia</dd>
+      <dt>Resume</dt><dd><a href="resume.pdf" download>Download PDF ↓</a></dd>
+      <dt>Portfolio</dt><dd><button class="print-btn" onclick="window.print()">Save as PDF ↓</button></dd>
     </dl>
   </section>
 

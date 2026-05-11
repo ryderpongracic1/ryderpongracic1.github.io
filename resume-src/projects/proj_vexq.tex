@@ -1,0 +1,8 @@
+\resumeProjectHeading
+  {\textbf{Vectorized SQL Query Engine (vexq)} $|$ \emph{Go, SQL, Columnar Storage}}{Jan. 2026 \textemdash\ May 2026}
+  \resumeItemListStart
+    \resumeItem{Engineered a complete analytical query pipeline in \textbf{Golang}: custom \textbf{.vxq columnar file format} with per-row-group \textbf{zone maps}, dictionary-encoded strings, and \textbf{CRC32} block integrity.}
+    \resumeItem{Built a \textbf{vectorized Volcano-model execution engine} with 1024-row \textbf{L1-cached batches}, a \textbf{Pratt SQL parser}, and predicate-pushdown optimizer, achieving a \textbf{4.5x speedup} over SQLite on TPC-H 6M-row scans.}
+    \resumeItem{Implemented \textbf{morsel-driven parallelism} partitioning row groups across goroutines with a \textbf{lock-free partial-merge}, yielding a \textbf{2.5x additional speedup} on aggregate queries.}
+  \resumeItemListEnd
+\vspace{-13pt}
