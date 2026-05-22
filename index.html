@@ -468,11 +468,11 @@
       <!-- distrikv — featured -->
       <article class="proj feature reveal">
         <div class="pkn">
-          <span>Featured · Apr–May 2026</span>
+          <span>Featured · Apr 2026 — Ongoing</span>
           <span>Go · gRPC · LSM-Tree · Raft · Docker</span>
         </div>
         <h3><a href="https://github.com/ryderpongracic1/distrikv" target="_blank" rel="noopener">distrikv — Distributed Key-Value Store ↗</a></h3>
-        <div class="stack">A production-quality, strictly consistent CP system — hand-rolled in Go.</div>
+        <div class="stack">A production-quality, strictly consistent CP system — hand-rolled in Go. Actively hardened through 5 production-grade engineering phases: benchmarking, storage optimization, chaos testing, and correctness verification.</div>
         <ul>
           <li><b>Consistent Hash Ring</b> — 150 virtual positions per physical node on a uint32 ring
             <ul>
@@ -480,22 +480,37 @@
               <li><code>GetN(key, R)</code> returns R <em>distinct</em> physical nodes — explicitly skips duplicate physical hosts</li>
             </ul>
           </li>
-          <li><b>LSM-Tree storage engine</b>
+          <li><b>LSM-Tree storage engine</b> — Leveled Compaction Strategy (L0 + L1)
             <ul>
-              <li>Writes: MemTable (sorted btree.BTreeG, RWMutex) → immutable buffer → SSTable flush</li>
-              <li><b>Bloom filters</b> (FNV-1a) skip SSTables on point reads; background compaction merges levels to bound read amplification</li>
+              <li>Writes: MemTable (sorted btree.BTreeG, RWMutex) → immutable buffer → SSTable flush; L0→L1 background compaction bounds read amplification</li>
+              <li><b>Bloom filters</b> (FNV-1a) skip SSTables on point reads</li>
+              <li><b>Write-stall backpressure</b>: soft sleep 5–50 ms at 8 L0 files, hard stop at 12 — prevents write floods from starving reads</li>
             </ul>
           </li>
           <li><b>Write-Ahead Logging</b> — CRC32 framing + fsync on every append
             <ul>
-              <li>Truncated-entry replay-safe on crash recovery</li>
-              <li>Atomic state persistence: write-to-temp + Sync + os.Rename — no partial files, ever</li>
+              <li>Phase 2 refactor: <b>−3 allocs/op</b> — persistent bufio.Writer, rolling CRC accumulator, zero-copy key view via unsafe.Slice</li>
+              <li>Atomic state persistence: write-to-temp + Sync + os.Rename — no partial files; torn-write replay stops cleanly at CRC mismatch</li>
             </ul>
           </li>
           <li><b>Raft consensus</b> — pre-vote phase + heartbeat for resilient leader election
             <ul>
               <li><b>InstallSnapshot</b> transfers binary state to lagging followers over gRPC</li>
-              <li>Ships with <b>distrikv-cli</b> (Cobra, injected AppContext, zero global state) and Docker Compose cluster</li>
+              <li>Atomic persistence of currentTerm/votedFor via write-temp-then-os.Rename</li>
+            </ul>
+          </li>
+          <li><b>Sharded LRU block cache</b> — 32 shards, 64 MB default<span class="stat">99.2% hit rate</span>
+            <ul>
+              <li>FNV-1a shard routing, O(1) promote/evict per shard; proactive eviction on compaction swap</li>
+              <li>Intercepts readBlock before disk — skips the ReadAt syscall + kernel→user copy on cache hit</li>
+            </ul>
+          </li>
+          <li><b>Production tooling &amp; correctness</b>
+            <ul>
+              <li><b>cmd/bench</b> — open-loop Poisson load generator; HDR histogram p50/p99/p999; coordinated-omission-aware baseline: 998.6 QPS @ p50=1.7ms, p99=26.8ms, WAF=1.83×<span class="stat">p99 26.8ms</span></li>
+              <li><b>cmd/chaos</b> — Jepsen-style chaos runner with <b>Porcupine linearizability</b> verification against a live cluster</li>
+              <li>6 deterministic crash scenarios: torn WAL, concurrent-write durability, restore-sentinel recovery — all under <code>go test -race</code></li>
+              <li><b>distrikv-cli</b> (Cobra, injected AppContext): get/put/delete · status --all · metrics --watch · watch &lt;key&gt; · -o json for piping · semantic exit codes</li>
             </ul>
           </li>
         </ul>
@@ -509,20 +524,24 @@
         <ul>
           <li><b>Custom .vxq columnar format</b>
             <ul>
-              <li>File header → row groups (65,536 rows) → footer; 1,024-row blocks with null bitmap + typed payload + CRC32</li>
+              <li>File header → row groups (65,536 rows) → footer; 1,024-row blocks with null bitmap + typed payload + CRC32; little-endian throughout (single MOVQ/LDR decode on x86-64/ARM64)</li>
               <li>Strings always <b>dictionary-encoded</b> per row group — equality checks become integer comparison in the filter hot path</li>
-              <li><b>Zone maps</b> (min/max/nullcount) skip entire row groups before any block I/O</li>
+              <li><b>Zone maps</b> (min/max/nullcount) skip entire row groups before any block I/O; <code>fsck</code> command verifies CRC + zone-map integrity</li>
             </ul>
           </li>
           <li><b>Vectorized Volcano execution engine</b> — Filter uses selection vectors, zero allocations on the hot path
             <ul>
+              <li>1,024-row batches sized to L1 cache (≈8.2 KB per Int64Vector — fits 32–128 KB L1 on x86/M1); amortizes one virtual Next() dispatch over 1024 rows</li>
+              <li>Full operator set: TableScan · Filter · Project · HashAggregate · ParallelHashAggregate · ExternalSort · HashJoin · Limit</li>
               <li><b>Pratt SQL parser</b> (recursive-descent) → predicate-pushdown + column-pruning optimizer</li>
-              <li><b>4.5× over SQLite</b> on TPC-H Q1/Q3/Q6/Q12 at 6M rows<span class="stat">4.5× SQLite</span></li>
+              <li>TPC-H @ 6M rows (M1 Pro): Q1 <b>5.3×</b> SQLite · Q3 3.3× · Q6 3.0× — Q12 slower (HashJoin vs B-tree index, documented)<span class="stat">up to 5.3× SQLite</span></li>
             </ul>
           </li>
-          <li><b>Morsel-driven parallelism</b> — row groups fan out across goroutines
+          <li><b>Morsel-driven parallelism</b> — atomic-counter morsel queue across runtime.NumCPU() goroutines
             <ul>
-              <li>Lock-free partial HashAggregate merge — additional <b>2.5× on aggregate queries</b><span class="stat">+2.5× on agg</span></li>
+              <li>Work-stealing: fast workers claim more row groups dynamically — no static partition, no stragglers</li>
+              <li>Lock-free partial HashAggregate merge — Q6 parallel: 177ms vs 599ms SQLite<span class="stat">3.4× SQLite parallel</span></li>
+              <li>Honest ceiling: DuckDB (LLVM JIT + AVX-512 + radix-partitioned agg) is 21–110× faster — full root-cause gap analysis in README</li>
             </ul>
           </li>
         </ul>
