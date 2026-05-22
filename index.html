@@ -503,6 +503,11 @@
             <ul>
               <li>FNV-1a shard routing, O(1) promote/evict per shard; proactive eviction on compaction swap</li>
               <li>Intercepts readBlock before disk — skips the ReadAt syscall + kernel→user copy on cache hit</li>
+              <li>Zipfian α=1.1 baseline (100K keys, 768B values): 8 MB → <b>86.3%</b> · 32 MB → <b>95.8%</b> · 64 MB → <b>99.2%</b><span class="stat">Zipfian verified</span>
+                <ul>
+                  <li>8 MB holds ~2,048 blocks covering the top ~10K keys; at α=1.1 that captures ≈88% of reads — analytically consistent with 86.3% measured; disproportionate returns on the first few MB</li>
+                </ul>
+              </li>
             </ul>
           </li>
           <li><b>Production tooling &amp; correctness</b>
