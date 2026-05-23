@@ -386,13 +386,21 @@
         <h3 class="role">Computational Researcher</h3>
         <div class="org">Georgia Tech Bhamla Lab</div>
         <ul>
-          <li>Engineered <b>MATLAB</b> stochastic simulations using <b>Gillespie algorithms</b> — modeled pairwise &amp; ternary herding control frameworks</li>
+          <li>Engineered <b>MATLAB</b> stochastic simulations using <b>Gillespie algorithms</b> — <b>10K+</b> trajectories modeling pairwise &amp; ternary herding control frameworks
+            <ul>
+              <li>Identified <b>15% copy-trader ratio</b> as the optimal control threshold across simulation runs</li>
+            </ul>
+          </li>
           <li>Built Bluetooth <b>Arduino</b> robots from scratch to physically validate the theoretical systems
             <ul>
               <li>Custom spatial calibration method derived position entirely from <b>motor RPMs</b> — no external tracking hardware required</li>
             </ul>
           </li>
-          <li>Designed financial market simulations using <b>LangGraph LLM agents</b> &amp; <b>Pandas</b> — applied herding dynamics to trend-followers and copy-traders</li>
+          <li>Designed financial market simulations using <b>LangGraph LLM agents</b> &amp; <b>Pandas</b> — applied herding dynamics to trend-followers and copy-traders
+            <ul>
+              <li><b>20% LLM agent ratio</b> sufficient to exploit bull-market trends — agent wealth <b>$1,000 → $1,300</b> vs. physics-only baseline</li>
+            </ul>
+          </li>
         </ul>
       </div>
       <div class="where">Atlanta, GA</div>
@@ -404,15 +412,14 @@
         <h3 class="role">Computer Vision Researcher</h3>
         <div class="org">Georgia Tech School of Civil Engineering</div>
         <ul>
-          <li><b>6-year temporal dataset</b> of 3D laser range images — tracking street crack propagation where standard registration metrics frequently fail due to physical crack growth
+          <li><b>2,000-image 6-year</b> temporal dataset of 3D laser range images — tracking street crack propagation where standard registration metrics frequently fail
             <ul>
-              <li>Engineered a custom <b>High-Boost filter mask</b>; tuned Alpha/Beta parameters to balance execution cost vs. output — <b>140% increase</b> in baseline registration quality</li>
+              <li>Engineered a custom <b>High-Boost filter mask</b>; swept α/β parameters — avg max IoS/IoP <b>0.69 → 0.95</b>, failed registrations <b>12 → 1</b></li>
             </ul>
           </li>
-          <li>Architected Square &amp; Vertical <b>image interpolation techniques</b> to salvage failed homography matrices
+          <li>Architected Square &amp; Vertical <b>image interpolation techniques</b> to salvage <b>401 failed homographies</b>
             <ul>
-              <li><b>500% increase in recall</b> (Intersection of Source)</li>
-              <li><b>263% increase in precision</b> (Intersection of Prediction)</li>
+              <li>IoP (precision) <b>0.11–0.23 → 0.26–0.47</b>; IoS (recall) <b>near-zero → 0.09–0.31</b></li>
             </ul>
           </li>
         </ul>
@@ -472,7 +479,7 @@
           <span>Go · gRPC · LSM-Tree · Raft · Docker</span>
         </div>
         <h3><a href="https://github.com/ryderpongracic1/distrikv" target="_blank" rel="noopener">distrikv — Distributed Key-Value Store ↗</a></h3>
-        <div class="stack">A production-quality, strictly consistent CP system — hand-rolled in Go. Actively hardened through 5 production-grade engineering phases: benchmarking, storage optimization, chaos testing, and correctness verification.</div>
+        <div class="stack">A production-quality, strictly consistent CP system — hand-rolled in Go. Sustains <b>6K reads/s at p99 11ms</b> on a 3-node cluster. Actively hardened through 5 production-grade engineering phases.</div>
         <ul>
           <li><b>Consistent Hash Ring</b> — 150 virtual positions per physical node on a uint32 ring
             <ul>
@@ -512,7 +519,8 @@
           </li>
           <li><b>Production tooling &amp; correctness</b>
             <ul>
-              <li><b>cmd/bench</b> — open-loop Poisson load generator; HDR histogram p50/p99/p999; coordinated-omission-aware baseline: 998.6 QPS @ p50=1.7ms, p99=26.8ms, WAF=1.83×<span class="stat">p99 26.8ms</span></li>
+              <li><b>cmd/bench</b> — open-loop Poisson load generator; HDR histogram p50/p99/p999; coordinated-omission-aware; P1 baseline: 998.6 QPS @ p50=1.7ms, p99=26.8ms, WAF=1.83×<span class="stat">p99 26.8ms</span></li>
+              <li>Throughput ceiling (3-node M1 Max): reads <b>5,977/s @ p99=11ms</b> · writes 1,191/s @ p99=70ms · mixed 2,996/s @ p99=70ms<span class="stat">6K reads/s</span></li>
               <li><b>cmd/chaos</b> — Jepsen-style chaos runner with <b>Porcupine linearizability</b> verification against a live cluster</li>
               <li>6 deterministic crash scenarios: torn WAL, concurrent-write durability, restore-sentinel recovery — all under <code>go test -race</code></li>
               <li><b>distrikv-cli</b> (Cobra, injected AppContext): get/put/delete · status --all · metrics --watch · watch &lt;key&gt; · -o json for piping · semantic exit codes</li>
@@ -561,15 +569,15 @@
         </h3>
         <div class="stack">Best AI Hack winner · AI repository &amp; code documentation tool.</div>
         <ul>
-          <li>FastAPI backend + <b>multi-LLM</b> (Groq/Llama-3 + Google Gemini) with intelligent key-rotation failover
+          <li>FastAPI backend + <b>multi-LLM</b> (Groq/Llama-3 + Google Gemini) with intelligent failover — cycles through multiple API keys per provider on rate-limit
             <ul>
-              <li>Dual input: <b>GitHub OAuth2</b> repo fetch or ZIP upload</li>
-              <li>Pushes documented branch to origin with a direct PR link</li>
+              <li>Dual input: <b>GitHub OAuth2</b> repo fetch or ZIP upload; exclusions via regex or interactive file-tree selector</li>
+              <li>Pushes documented branch to origin with a direct PR link; ZIP path delivers a modified archive download</li>
             </ul>
           </li>
-          <li>Four-phase pipeline: scan → AST analysis → docstring generation → README synthesis
+          <li>Four-phase pipeline: scan → AST analysis → <b>reST docstring</b> generation → README synthesis
             <ul>
-              <li>Python <b>ast</b> module + <b>NetworkX</b> topological sort — base modules documented first for downstream context</li>
+              <li>Python <b>ast</b> module + <b>NetworkX</b> topological sort — base modules documented first; docstrings surgically inserted back into source files via AST rewrite</li>
               <li>Bottom-up README synthesis from leaf directory to project root</li>
               <li>Real-time <b>SSE</b> progress streaming to the frontend</li>
             </ul>
