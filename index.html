@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <title>ryder pongracic // portfolio</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Ryder Pongracic — CS @ Georgia Tech. Distributed systems, query engines, graph-data tooling. Incoming SDE intern at Amazon FinTech.">
+<meta name="description" content="Ryder Pongracic — CS @ Georgia Tech. Distributed systems, query engines, graph-data tooling. SDE intern at Amazon FinTech.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&display=swap" rel="stylesheet">
@@ -334,9 +334,9 @@
     </div>
     <div class="right">
       <p class="reveal">A computer scientist at <em>Georgia Tech</em> — building distributed systems, query engines, and graph-data tooling from the ground up. I work at the intersection of low-level storage engineering and large-scale data problems.</p>
-      <p class="reveal">Incoming SDE intern at <em>Amazon FinTech</em> this summer, then back to finish my MS. Always interested in hard engineering problems.</p>
+      <p class="reveal">Currently an SDE intern at <em>Amazon FinTech</em> in Arlington, VA — shipping serverless financial infrastructure. Finishing my B.S. in December, then straight into the MS. Always interested in hard engineering problems.</p>
       <div class="meta reveal">
-        <span>Available — Fall '26</span>
+        <span>MS CS @ Georgia Tech '28</span>
         <a href="resume.pdf" download>Resume ↓</a>
         <button class="meta-btn" onclick="window.print()">Portfolio PDF ↓</button>
         <span class="meta-break"></span>
@@ -356,15 +356,32 @@
     </div>
 
     <div class="xp reveal">
-      <div class="when">Jun 2026 — Aug 2026</div>
+      <div class="when">Jun 2026 — Present</div>
       <div>
         <h3 class="role">Software Development Engineer Intern</h3>
-        <div class="org">Amazon &nbsp;·&nbsp; FinTech Org</div>
+        <div class="org">Amazon &nbsp;·&nbsp; FinTech</div>
         <ul>
-          <li>Joining the <b>Asset Review Management</b> (ARM) team, <b>Fixed Asset Automation</b> (FAA) vertical — building automated financial infrastructure at Amazon scale.</li>
+          <li>Authored the approved design doc and shipped a <b>Step Functions</b>-orchestrated asset reclassification service end-to-end across <b>80 production CRs</b> (Java Lambda, Smithy APIs, TypeScript CDK) at a <b>100% line/branch coverage</b> gate
+            <ul>
+              <li>Cut a <b>2–3 week</b> manual cross-team process to <b>under 5 minutes</b></li>
+              <li>Closed a data-integrity gap that could silently orphan assets and break GL postings across every active category</li>
+            </ul>
+          </li>
+          <li>Built the execution layer on a <b>Distributed Map</b> — 25-asset batches at 25× concurrency over a batch subledger API, with <b>DynamoDB TransactWriteItems</b> sentinel locking and deterministic idempotency keys for exactly-once execution
+            <ul>
+              <li><b>13,368 assets</b> reclassified in a <b>60-second</b> run across 535 batches, <b>0 failures</b></li>
+              <li>Scales sublinearly — <b>+36% volume for +24% wall clock</b> — at a measured <b>$0.03 per 10K assets</b> of infrastructure cost</li>
+            </ul>
+          </li>
+          <li>Replaced a paginated API's <b>10K-record hard ceiling</b> with an <b>Athena UNLOAD</b> enumeration adapter
+            <ul>
+              <li>Streams manifests for <b>5.77M+ records</b> across all <b>225 categories</b> to S3 with parameterized queries and failsafe retry polling</li>
+            </ul>
+          </li>
+          <li>Root-caused an <b>org-wide pipeline outage</b> outside my own project — a hardcoded canary assertion tripped a <b>CodeDeploy</b> alarm halting all Lambda traffic shifts behind an opaque CloudFormation error; shipped the fix and restored deploys</li>
         </ul>
       </div>
-      <div class="where">Arlington, VA<br/>Incoming</div>
+      <div class="where">Arlington, VA</div>
     </div>
 
     <div class="xp reveal">
@@ -479,51 +496,40 @@
           <span>Go · gRPC · LSM-Tree · Raft · Docker</span>
         </div>
         <h3><a href="https://github.com/ryderpongracic1/distrikv" target="_blank" rel="noopener">distrikv — Distributed Key-Value Store ↗</a></h3>
-        <div class="stack">A production-quality, strictly consistent CP system — hand-rolled in Go. Sustains <b>6K reads/s at p99 11ms</b> on a 3-node cluster. Actively hardened through 5 production-grade engineering phases.</div>
+        <div class="stack">A strictly consistent CP key-value store, hand-rolled in Go. The <b>consistent hash ring owns data placement and replication</b>; Raft handles leader election and membership only. Every number below is measured on a live 3-node cluster.</div>
         <ul>
-          <li><b>Consistent Hash Ring</b> — 150 virtual positions per physical node on a uint32 ring
+          <li><b>Throughput ceiling</b> — 3-node Docker cluster, open-loop Poisson load, 128 workers, 256B values
             <ul>
-              <li>Keys placed via MD5(key)[0:4] → uint32, walk clockwise to nearest vnode</li>
-              <li><code>GetN(key, R)</code> returns R <em>distinct</em> physical nodes — explicitly skips duplicate physical hosts</li>
+              <li>reads <b>6,017/s @ p99 1.7ms</b> · writes <b>1,200/s @ p99 3.8ms</b> · mixed <b>3,000/s @ p99 2.5ms</b> — zero errors, no saturation<span class="stat">6K reads/s</span></li>
+              <li>Open-loop generator is coordinated-omission-aware; an etcd comparison harness runs the same methodology with configs disclosed</li>
             </ul>
           </li>
-          <li><b>LSM-Tree storage engine</b> — Leveled Compaction Strategy (L0 + L1)
+          <li><b>Consistent hash ring</b> — owns key placement <em>and</em> replica set selection
             <ul>
-              <li>Writes: MemTable (sorted btree.BTreeG, RWMutex) → immutable buffer → SSTable flush; L0→L1 background compaction bounds read amplification</li>
-              <li><b>Bloom filters</b> (FNV-1a) skip SSTables on point reads</li>
-              <li><b>Write-stall backpressure</b>: soft sleep 5–50 ms at 8 L0 files, hard stop at 12 — prevents write floods from starving reads</li>
+              <li>Virtual positions per physical node on a uint32 ring; <code>GetN(key, R)</code> returns R <em>distinct</em> physical hosts</li>
+              <li>Raft's role is deliberately narrow: leader election and membership. Log replication is a documented stub — the ring, not the consensus log, moves data</li>
+              <li>Fixed an election-storm defect measured at <b>~1.7 terms/sec</b> — now one election at startup and stable terms thereafter</li>
             </ul>
           </li>
-          <li><b>Write-Ahead Logging</b> — CRC32 framing + fsync on every append
+          <li><b>LSM-Tree storage engine</b> — leveled compaction (L0 → L1)
             <ul>
-              <li>Phase 2 refactor: <b>−3 allocs/op</b> — persistent bufio.Writer, rolling CRC accumulator, zero-copy key view via unsafe.Slice</li>
-              <li>Atomic state persistence: write-to-temp + Sync + os.Rename — no partial files; torn-write replay stops cleanly at CRC mismatch</li>
+              <li><b>Write-stall backpressure</b> bounds L0 growth so write floods can't starve reads</li>
+              <li><b>Bloom filters</b> skip SSTables on point reads at a measured <b>0.01% false-positive rate</b></li>
+              <li>Hardened WAL — CRC32 framing, fsync per append, allocations cut <b>5 → 2 per append</b></li>
+              <li><b>32-shard LRU block cache</b> — Zipfian (α=1.1) vs uniform on a 500K-key flushed store: <b>97.2% vs 70.9%</b> hit rate, same cluster, one flag changed<span class="stat">97.2% zipfian hit rate</span></li>
             </ul>
           </li>
-          <li><b>Raft consensus</b> — pre-vote phase + heartbeat for resilient leader election
+          <li><b>Per-key sequence numbering</b> — apply-if-newer replication on WAL-persisted sequence numbers
             <ul>
-              <li><b>InstallSnapshot</b> transfers binary state to lagging followers over gRPC</li>
-              <li>Atomic persistence of currentTerm/votedFor via write-temp-then-os.Rename</li>
+              <li>Makes replica arrival-order inversions <b>impossible by construction</b> rather than unlikely</li>
+              <li>Epoch-guarded so a restarted node can't regress its counter and resurrect stale writes</li>
             </ul>
           </li>
-          <li><b>Sharded LRU block cache</b> — 32 shards, 64 MB default<span class="stat">99.2% hit rate</span>
+          <li><b>Correctness under fault injection</b> — Porcupine linearizability checker + a Jepsen-style chaos runner with kill-restart and stop-restart nemeses
             <ul>
-              <li>FNV-1a shard routing, O(1) promote/evict per shard; proactive eviction on compaction swap</li>
-              <li>Intercepts readBlock before disk — skips the ReadAt syscall + kernel→user copy on cache hit</li>
-              <li>Zipfian α=1.1 baseline (100K keys, 768B values): 8 MB → <b>86.3%</b> · 32 MB → <b>95.8%</b> · 64 MB → <b>99.2%</b><span class="stat">Zipfian verified</span>
-                <ul>
-                  <li>8 MB holds ~2,048 blocks covering the top ~10K keys; at α=1.1 that captures ≈88% of reads — analytically consistent with 86.3% measured; disproportionate returns on the first few MB</li>
-                </ul>
-              </li>
-            </ul>
-          </li>
-          <li><b>Production tooling &amp; correctness</b>
-            <ul>
-              <li><b>cmd/bench</b> — open-loop Poisson load generator; HDR histogram p50/p99/p999; coordinated-omission-aware; P1 baseline: 998.6 QPS @ p50=1.7ms, p99=26.8ms, WAF=1.83×<span class="stat">p99 26.8ms</span></li>
-              <li>Throughput ceiling (3-node M1 Max): reads <b>5,977/s @ p99=11ms</b> · writes 1,191/s @ p99=70ms · mixed 2,996/s @ p99=70ms<span class="stat">6K reads/s</span></li>
-              <li><b>cmd/chaos</b> — Jepsen-style chaos runner with <b>Porcupine linearizability</b> verification against a live cluster</li>
-              <li>6 deterministic crash scenarios: torn WAL, concurrent-write durability, restore-sentinel recovery — all under <code>go test -race</code></li>
-              <li><b>distrikv-cli</b> (Cobra, injected AppContext): get/put/delete · status --all · metrics --watch · watch &lt;key&gt; · -o json for piping · semantic exit codes</li>
+              <li><b>13 harness-caught defects</b> found, fixed, and pinned as regression tests<span class="stat">13 defects pinned</span></li>
+              <li>Anti-entropy repair converged <b>~104,000</b> refused-but-applied writes using only <b>373</b> shipped catch-up entries — <b>~350× key-level dedup</b> — in 1–5s<span class="stat">350× dedup</span></li>
+              <li>Final gate: <b>4/4 consecutive chaos runs plus control all PASS</b> with linearizable histories</li>
             </ul>
           </li>
         </ul>
@@ -531,30 +537,35 @@
 
       <!-- vexq -->
       <article class="proj reveal">
-        <div class="pkn"><span>Jan–May 2026</span><span>Go · SQL · Columnar Storage</span></div>
+        <div class="pkn"><span>May 2026 — Aug 2026</span><span>Go · C++/AVX2 · SQL</span></div>
         <h3><a href="https://github.com/ryderpongracic1/vexq" target="_blank" rel="noopener">vexq — Vectorized SQL Query Engine ↗</a></h3>
-        <div class="stack">A complete analytical query pipeline, written from scratch in Go.</div>
+        <div class="stack">A complete analytical query pipeline, written from scratch in Go — and it beats <b>DuckDB</b> end-to-end on TPC-H Q1.</div>
         <ul>
-          <li><b>Custom .vxq columnar format</b>
+          <li><b>Benchmarks</b> — same machine, disclosed configs
             <ul>
-              <li>File header → row groups (65,536 rows) → footer; 1,024-row blocks with null bitmap + typed payload + CRC32; little-endian throughout (single MOVQ/LDR decode on x86-64/ARM64)</li>
-              <li>Strings always <b>dictionary-encoded</b> per row group — equality checks become integer comparison in the filter hot path</li>
-              <li><b>Zone maps</b> (min/max/nullcount) skip entire row groups before any block I/O; <code>fsck</code> command verifies CRC + zone-map integrity</li>
+              <li>TPC-H Q1 all cores: <b>22 ms vs DuckDB's 25 ms</b>; within <b>1.2×</b> single-threaded<span class="stat">beats duckdb on q1</span></li>
+              <li><b>3.0–18.4× over SQLite</b> on all four benchmarked queries<span class="stat">3.0–18.4× sqlite</span></li>
+              <li>An isolated C++/AVX2 kernel study measured the <b>SIMD filter ceiling at 3.3×</b> — the honest upper bound on hand-vectorizing the filter path</li>
             </ul>
           </li>
-          <li><b>Vectorized Volcano execution engine</b> — Filter uses selection vectors, zero allocations on the hot path
+          <li><b>Custom columnar format</b>
             <ul>
-              <li>1,024-row batches sized to L1 cache (≈8.2 KB per Int64Vector — fits 32–128 KB L1 on x86/M1); amortizes one virtual Next() dispatch over 1024 rows</li>
-              <li>Full operator set: TableScan · Filter · Project · HashAggregate · ParallelHashAggregate · ExternalSort · HashJoin · Limit</li>
-              <li><b>Pratt SQL parser</b> (recursive-descent) → predicate-pushdown + column-pruning optimizer</li>
-              <li>TPC-H @ 6M rows (M1 Pro): Q1 <b>5.3×</b> SQLite · Q3 3.3× · Q6 3.0× — Q12 slower (HashJoin vs B-tree index, documented)<span class="stat">up to 5.3× SQLite</span></li>
+              <li>Per-row-group <b>zone maps</b> skip entire row groups before any block I/O</li>
+              <li>Strings <b>dictionary-encoded</b> — equality checks collapse to integer comparison in the filter hot path</li>
+              <li><b>CRC32</b> block integrity throughout</li>
             </ul>
           </li>
-          <li><b>Morsel-driven parallelism</b> — atomic-counter morsel queue across runtime.NumCPU() goroutines
+          <li><b>Vectorized Volcano engine</b> — 1,024-row batches sized to L1 cache, selection-vector filters
             <ul>
-              <li>Work-stealing: fast workers claim more row groups dynamically — no static partition, no stragglers</li>
-              <li>Lock-free partial HashAggregate merge — Q6 parallel: 177ms vs 599ms SQLite<span class="stat">3.4× SQLite parallel</span></li>
-              <li>Honest ceiling: DuckDB (LLVM JIT + AVX-512 + radix-partitioned agg) is 21–110× faster — full root-cause gap analysis in README</li>
+              <li><b>Pratt SQL parser</b> → predicate-pushdown and join-column-pruning optimizer</li>
+              <li>Correctness held by a <b>72-query golden oracle</b> across 4 execution paths — serial, parallel, optimizer-off, stacked-filter — all under <code>-race</code> in CI<span class="stat">72-query oracle</span></li>
+            </ul>
+          </li>
+          <li><b>Parallel scaling: the GC was the bottleneck, and I proved it</b>
+            <ul>
+              <li>A <b>GOGC ablation</b> isolated Go's garbage collector at <b>26–50% of parallel wall time</b></li>
+              <li>Allocation campaign — flat open-addressed join table, per-worker pipeline reuse, scratch-buffer pooling — cut join-build allocations <b>1.2M → 1.5K per op</b><span class="stat">1.2M → 1.5K allocs</span></li>
+              <li>GC's share fell to <b>0–19%</b>, lifting Q1 to <b>8.6× scaling on 14 cores</b> — about <b>86% of the 10-P-core ceiling</b></li>
             </ul>
           </li>
         </ul>
@@ -582,6 +593,7 @@
               <li>Real-time <b>SSE</b> progress streaming to the frontend</li>
             </ul>
           </li>
+          <li><b>Hardened post-hack</b> — dependency-graph inversion fix, source-preserving docstring insertion via <b>libcst</b> (replacing lossy <code>ast.unparse</code>), zip-slip and OAuth token handling fixes, and tests <b>0 → 38</b><span class="stat">0 → 38 tests</span></li>
         </ul>
       </article>
 
@@ -594,6 +606,7 @@
           <li>Streaming <b>lxml iterparse</b> ingest of <b>500GB+</b> Wikipedia XML dumps
             <ul>
               <li><b>7M+ articles</b> and <b>1.2B+ links</b> via MERGE-idempotent Cypher into Neo4j — safely restartable</li>
+              <li>Reworked the ingest to hold constant memory: peak <b>747 MB → 179 MB</b><span class="stat">747 → 179 MB</span></li>
             </ul>
           </li>
           <li>Graph algorithms at scale via <b>Neo4j GDS</b>
@@ -601,11 +614,12 @@
               <li>PageRank — structural influence scoring</li>
               <li>Louvain — community detection and clustering</li>
               <li>Dijkstra / BFS — shortest knowledge paths between subjects</li>
-              <li>Exposed through a <b>Flask REST API</b></li>
+              <li>Exposed through a <b>Flask REST API</b> with pagination and request validation</li>
             </ul>
           </li>
-          <li>95-test <b>pytest</b> suite (unit / integration / benchmark)
+          <li><b>108 unit + 4 integration tests</b> in pytest<span class="stat">zero skips</span>
             <ul>
+              <li>The GDS tests run against a <b>live Neo4j + GDS container</b> — zero skips, so the graph algorithms are exercised for real rather than mocked</li>
               <li><b>GitHub Actions CI</b> across Python 3.9–3.11 with a Neo4j service container</li>
             </ul>
           </li>
@@ -614,18 +628,31 @@
 
       <!-- Wildfire -->
       <article class="proj reveal">
-        <div class="pkn"><span>Jan 2026</span><span>C++17 · OpenMP · PostGIS · Docker · Leaflet.js</span></div>
+        <div class="pkn"><span>Jan 2026 · hardened Aug 2026</span><span>C++17 · OpenMP · GDAL · PostGIS · Docker · Leaflet</span></div>
         <h3><a href="https://github.com/ryderpongracic1/wildfire-simulator" target="_blank" rel="noopener">Wildfire Spread Simulator ↗</a></h3>
-        <div class="stack">Rothermel fire physics on a geospatial cellular automaton — in C++.</div>
+        <div class="stack">Geospatial fire propagation in C++ — and a lesson in proving a model actually responds to its inputs.</div>
         <ul>
-          <li>C++17 simulation engine — <b>Rothermel fire spread equations</b> on a geospatial CA grid
+          <li><b>Deterministic time-of-arrival propagation</b> driven by directional <b>Rothermel</b> rate-of-spread
             <ul>
-              <li><b>OpenMP</b> parallelism: 2-hour simulation → <b>under 3 seconds</b> — <b>11.6× speedup</b><span class="stat">120 min → &lt;3 sec</span></li>
+              <li>Wind elongation, slope asymmetry, moisture damping and extinction, and firebreaks all <em>measurably</em> change the burn</li>
+              <li>This replaced a model that burned an identical square regardless of input — proved with a <b>9-configuration diagnostic</b> before rewriting anything<span class="stat">9-config diagnostic</span></li>
             </ul>
           </li>
-          <li>Spatial data pipeline: <b>PostgreSQL/PostGIS</b> for USGS elevation &amp; LANDFIRE fuel-type data
+          <li><b>Regression suite from zero</b> — <b>15-case C++ physics</b> suite under CTest plus <b>44 API tests</b>
             <ul>
-              <li>Fully <b>Dockerized</b>: Flask REST API + Leaflet.js interactive map frontend</li>
+              <li>Every shape-response test provably <em>fails</em> against the old model — that's the revert-check<span class="stat">15 c++ · 44 api</span></li>
+            </ul>
+          </li>
+          <li><b>Rebuilt the parallel step copy-free</b> — benchmark <b>1.27s → 0.20s</b>
+            <ul>
+              <li>The original's OpenMP was a measured <b>2× slowdown</b>, not a speedup<span class="stat">1.27s → 0.20s</span></li>
+            </ul>
+          </li>
+          <li><b>Infrastructure hardening</b>
+            <ul>
+              <li>Multi-stage <b>Docker</b> build compiles the simulator binary into the API image — removed a docker-engine-in-container escape hatch</li>
+              <li>Bounded execution pool and path-containment validation on user-supplied raster paths</li>
+              <li><b>CRS-aware Leaflet</b> rendering over a <b>PostGIS</b> pipeline — fires now draw where the data says they happened</li>
             </ul>
           </li>
         </ul>
@@ -736,7 +763,7 @@
   <footer>
     <div>© 2026 Ryder Pongracic</div>
     <div class="mid">— fin —</div>
-    <div class="right">Vol. I · Last updated May '26</div>
+    <div class="right">Vol. I · Last updated Aug '26</div>
   </footer>
 </main>
 
