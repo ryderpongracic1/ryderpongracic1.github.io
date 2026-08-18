@@ -496,7 +496,7 @@
           <span>Go · gRPC · LSM-Tree · Raft · Docker</span>
         </div>
         <h3><a href="https://github.com/ryderpongracic1/distrikv" target="_blank" rel="noopener">distrikv — Distributed Key-Value Store ↗</a></h3>
-        <div class="stack">A strictly consistent CP key-value store, hand-rolled in Go. The <b>consistent hash ring owns data placement and replication</b>; Raft handles leader election and membership only. Every number below is measured on a live 3-node cluster.</div>
+        <div class="stack">A strictly consistent CP key-value store, hand-rolled in Go. The <b>consistent hash ring owns data placement and replication</b>; Raft carries only cluster-wide node health, committed through its own log — no dedicated liveness probes. Every number below is measured on a live 3-node cluster.</div>
         <ul>
           <li><b>Throughput ceiling</b> — 3-node Docker cluster, open-loop Poisson load, 128 workers, 256B values
             <ul>
@@ -507,7 +507,7 @@
           <li><b>Consistent hash ring</b> — owns key placement <em>and</em> replica set selection
             <ul>
               <li>Virtual positions per physical node on a uint32 ring; <code>GetN(key, R)</code> returns R <em>distinct</em> physical hosts</li>
-              <li>Raft's role is deliberately narrow: leader election and membership. Log replication is a documented stub — the ring, not the consensus log, moves data</li>
+              <li>Raft's log replication is real (§5.3 log matching, crash-persistent, apply-on-commit) but deliberately narrow: it carries only node-health transitions — the ring, not the consensus log, moves data</li>
               <li>Fixed an election-storm defect measured at <b>~1.7 terms/sec</b> — now one election at startup and stable terms thereafter</li>
             </ul>
           </li>
@@ -527,8 +527,8 @@
           </li>
           <li><b>Correctness under fault injection</b> — Porcupine linearizability checker + a Jepsen-style chaos runner with kill-restart and stop-restart nemeses
             <ul>
-              <li><b>13 harness-caught defects</b> found, fixed, and pinned as regression tests<span class="stat">13 defects pinned</span></li>
-              <li>Anti-entropy repair converged <b>~104,000</b> refused-but-applied writes using only <b>373</b> shipped catch-up entries — <b>~350× key-level dedup</b> — in 1–5s<span class="stat">350× dedup</span></li>
+              <li><b>14 defects</b> found, fixed, and pinned as regression tests — the last two the same failure shape caught twice<span class="stat">14 defects pinned</span></li>
+              <li>Anti-entropy repair converged <b>~104,000</b> refused-but-applied writes using only <b>373</b> shipped catch-up entries — <b>~280× key-level dedup</b> — in 1–5s<span class="stat">280× dedup</span></li>
               <li>Final gate: <b>4/4 consecutive chaos runs plus control all PASS</b> with linearizable histories</li>
             </ul>
           </li>
