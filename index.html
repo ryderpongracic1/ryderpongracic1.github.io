@@ -539,11 +539,11 @@
       <article class="proj reveal">
         <div class="pkn"><span>May 2026 — Aug 2026</span><span>Go · C++/AVX2 · SQL</span></div>
         <h3><a href="https://github.com/ryderpongracic1/vexq" target="_blank" rel="noopener">vexq — Vectorized SQL Query Engine ↗</a></h3>
-        <div class="stack">A complete analytical query pipeline, written from scratch in Go — and it beats <b>DuckDB</b> end-to-end on TPC-H Q1.</div>
+        <div class="stack">A complete analytical query pipeline, written from scratch in Go — within <b>1.2×</b> of DuckDB end-to-end on TPC-H Q1.</div>
         <ul>
           <li><b>Benchmarks</b> — same machine, disclosed configs
             <ul>
-              <li>TPC-H Q1 all cores: <b>22 ms vs DuckDB's 25 ms</b>; within <b>1.2×</b> single-threaded<span class="stat">beats duckdb on q1</span></li>
+              <li>TPC-H Q1 all cores: <b>22 ms vs DuckDB's 19 ms</b> (steady-state); within <b>1.2×</b> single-threaded<span class="stat">within 1.2x of duckdb on q1</span></li>
               <li><b>3.0–18.4× over SQLite</b> on all four benchmarked queries<span class="stat">3.0–18.4× sqlite</span></li>
               <li>An isolated C++/AVX2 kernel study measured the <b>SIMD filter ceiling at 3.3×</b> — the honest upper bound on hand-vectorizing the filter path</li>
             </ul>
