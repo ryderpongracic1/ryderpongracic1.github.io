@@ -218,8 +218,31 @@
   .proj:hover { transform: translateY(-2px); box-shadow: 0 12px 32px -16px rgba(0,0,0,0.16); }
   .proj.feature { grid-column: 1 / -1; padding: 36px 36px 28px; }
   /* projects section runs 3-up; archive keeps its 2-up rhythm */
-  #proj .proj-grid { grid-template-columns: repeat(3, 1fr); gap: 24px; align-items: start; }
-  #proj .proj { padding: 24px 22px 20px; }
+  #proj .proj-grid { grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  #proj .proj {
+    padding: 24px 22px 20px;
+    height: 660px;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+  /* the header block stays put; only the detail list scrolls */
+  #proj .proj > ul {
+    flex: 1 1 auto; min-height: 0;
+    overflow-y: auto;
+    padding-right: 12px;
+    padding-bottom: 20px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--rule) transparent;
+  }
+  #proj .proj > ul::-webkit-scrollbar { width: 5px; }
+  #proj .proj > ul::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 3px; }
+  #proj .proj > ul::-webkit-scrollbar-track { background: transparent; }
+  /* fade the cut edge so it reads as "more below", not a crop */
+  #proj .proj::after {
+    content: ''; position: absolute; left: 1px; right: 1px; bottom: 1px;
+    height: 36px; pointer-events: none;
+    background: linear-gradient(to bottom, rgba(221,216,201,0) 0%, rgba(221,216,201,0.92) 70%, var(--paper) 100%);
+  }
   #proj .proj h3 { font-size: 19px; }
   #proj .proj .stack { font-size: 14px; }
   #proj .proj ul { font-size: 13px; padding-left: 15px; }
@@ -297,6 +320,9 @@
     main { padding: 24px 32px 48px; }
     .xp { break-inside: avoid; }
     .proj { break-inside: avoid; }
+    #proj .proj { height: auto; overflow: visible; }
+    #proj .proj > ul { overflow: visible; padding-right: 0; padding-bottom: 0; }
+    #proj .proj::after { display: none; }
     .sec { break-inside: avoid; }
     .reveal { opacity: 1 !important; transform: none !important; }
   }
@@ -307,6 +333,9 @@
   }
   @media (max-width: 768px) {
     #proj .proj-grid { grid-template-columns: 1fr; }
+    #proj .proj { height: auto; overflow: visible; }
+    #proj .proj > ul { overflow: visible; padding-right: 0; padding-bottom: 0; }
+    #proj .proj::after { display: none; }
     main { padding: 32px 24px 100px; }
     .topbar { grid-template-columns: 1fr 1fr; }
     .topbar .mid { display: none; }
@@ -506,7 +535,7 @@
           <span>Go · gRPC · LSM-Tree · Raft · Docker</span>
         </div>
         <h3><a href="https://github.com/ryderpongracic1/distrikv" target="_blank" rel="noopener">distrikv — Distributed Key-Value Store ↗</a></h3>
-        <div class="stack">A strictly consistent CP key-value store, hand-rolled in Go. The <b>consistent hash ring owns data placement and replication</b>; Raft carries only cluster-wide node health, committed through its own log — no dedicated liveness probes. Every number below is measured on a live 3-node cluster.</div>
+        <div class="stack">A strictly consistent CP key-value store, hand-rolled in Go — the <b>hash ring owns replication</b>, Raft carries only node health. Every number below is measured on a live 3-node cluster.</div>
         <ul>
           <li><b>Throughput ceiling</b> — 3-node Docker cluster, open-loop Poisson load, 128 workers, 256B values
             <ul>
@@ -517,7 +546,7 @@
           <li><b>Consistent hash ring</b> — owns key placement <em>and</em> replica set selection
             <ul>
               <li>Virtual positions per physical node on a uint32 ring; <code>GetN(key, R)</code> returns R <em>distinct</em> physical hosts</li>
-              <li>Raft's log replication is real (§5.3 log matching, crash-persistent, apply-on-commit) but deliberately narrow: it carries only node-health transitions — the ring, not the consensus log, moves data</li>
+              <li>Raft's log replication is real (§5.3 log matching, crash-persistent, apply-on-commit) but deliberately narrow: it carries only node-health transitions, committed through its own log — so there are <b>no dedicated liveness probes</b>, and the ring, not the consensus log, moves data</li>
               <li>Fixed an election-storm defect measured at <b>~1.7 terms/sec</b> — now one election at startup and stable terms thereafter</li>
             </ul>
           </li>
@@ -549,7 +578,7 @@
       <article class="proj reveal">
         <div class="pkn"><span>Flagship · Aug 2026</span><span>C++20 · Event-time · CMake</span></div>
         <h3><a href="https://github.com/ryderpongracic1/stormglass" target="_blank" rel="noopener">stormglass — Event-Time Stream Processor ↗</a></h3>
-        <div class="stack">A single-process, keyed-parallel stream processing engine with <b>verified windowed aggregation semantics</b>. Tumbling and sliding windows, bounded out-of-orderness watermarks, at-least-once delivery through atomic checkpoint/restore — and a differential oracle that has to agree with the engine on every drop and every fire.</div>
+        <div class="stack">A keyed-parallel event-time stream processor in C++20 — tumbling and sliding windows, bounded out-of-orderness watermarks, at-least-once checkpoint/restore — with a <b>differential oracle</b> that has to agree on every drop and every fire.</div>
         <ul>
           <li><b>The correctness property</b> — an <em>unmodified</em> oracle, fed the same deterministic input, computes exactly the engine's drop/fire decisions
             <ul>
@@ -594,7 +623,7 @@
       <article class="proj reveal">
         <div class="pkn"><span>Flagship · May 2026 — Aug 2026</span><span>Go · C++/AVX2 · SQL</span></div>
         <h3><a href="https://github.com/ryderpongracic1/vexq" target="_blank" rel="noopener">vexq — Vectorized SQL Query Engine ↗</a></h3>
-        <div class="stack">A complete analytical query engine written from scratch in Go — custom on-disk columnar format, SQL parser, rule-based optimizer, and a vectorized execution engine. Benchmarked against <b>DuckDB as the ceiling and SQLite as the floor</b>, same machine, configs disclosed.</div>
+        <div class="stack">A complete analytical query engine from scratch in Go — columnar format, SQL parser, optimizer, vectorized execution. Benchmarked with <b>DuckDB as the ceiling, SQLite as the floor</b>, same machine.</div>
         <ul>
           <li><b>The ceiling — vs DuckDB</b> on TPC-H SF1 (6M lineitem rows), decomposed into per-core efficiency and end-to-end throughput
             <ul>
