@@ -217,6 +217,12 @@
   }
   .proj:hover { transform: translateY(-2px); box-shadow: 0 12px 32px -16px rgba(0,0,0,0.16); }
   .proj.feature { grid-column: 1 / -1; padding: 36px 36px 28px; }
+  /* projects section runs 3-up; archive keeps its 2-up rhythm */
+  #proj .proj-grid { grid-template-columns: repeat(3, 1fr); gap: 24px; align-items: start; }
+  #proj .proj { padding: 24px 22px 20px; }
+  #proj .proj h3 { font-size: 19px; }
+  #proj .proj .stack { font-size: 14px; }
+  #proj .proj ul { font-size: 13px; padding-left: 15px; }
   .proj .pkn {
     font-size: 11px;
     letter-spacing: 0.08em;
@@ -296,7 +302,11 @@
   }
 
   /* responsive */
+  @media (max-width: 1080px) {
+    #proj .proj-grid { grid-template-columns: repeat(2, 1fr); }
+  }
   @media (max-width: 768px) {
+    #proj .proj-grid { grid-template-columns: 1fr; }
     main { padding: 32px 24px 100px; }
     .topbar { grid-template-columns: 1fr 1fr; }
     .topbar .mid { display: none; }
@@ -490,9 +500,9 @@
     <div class="proj-grid">
 
       <!-- distrikv — featured -->
-      <article class="proj feature reveal">
+      <article class="proj reveal">
         <div class="pkn">
-          <span>Featured · Apr 2026 — Ongoing</span>
+          <span>Flagship · Apr 2026 — Ongoing</span>
           <span>Go · gRPC · LSM-Tree · Raft · Docker</span>
         </div>
         <h3><a href="https://github.com/ryderpongracic1/distrikv" target="_blank" rel="noopener">distrikv — Distributed Key-Value Store ↗</a></h3>
@@ -537,7 +547,7 @@
 
       <!-- stormglass -->
       <article class="proj reveal">
-        <div class="pkn"><span>Aug 2026</span><span>C++20 · Event-time · CMake · Multi-threaded</span></div>
+        <div class="pkn"><span>Flagship · Aug 2026</span><span>C++20 · Event-time · CMake</span></div>
         <h3><a href="https://github.com/ryderpongracic1/stormglass" target="_blank" rel="noopener">stormglass — Event-Time Stream Processor ↗</a></h3>
         <div class="stack">A single-process, keyed-parallel stream processing engine with <b>verified windowed aggregation semantics</b>. Tumbling and sliding windows, bounded out-of-orderness watermarks, at-least-once delivery through atomic checkpoint/restore — and a differential oracle that has to agree with the engine on every drop and every fire.</div>
         <ul>
@@ -582,35 +592,87 @@
 
       <!-- vexq -->
       <article class="proj reveal">
-        <div class="pkn"><span>May 2026 — Aug 2026</span><span>Go · C++/AVX2 · SQL</span></div>
+        <div class="pkn"><span>Flagship · May 2026 — Aug 2026</span><span>Go · C++/AVX2 · SQL</span></div>
         <h3><a href="https://github.com/ryderpongracic1/vexq" target="_blank" rel="noopener">vexq — Vectorized SQL Query Engine ↗</a></h3>
-        <div class="stack">A complete analytical query pipeline, written from scratch in Go — within <b>1.2×</b> of DuckDB end-to-end on TPC-H Q1.</div>
+        <div class="stack">A complete analytical query engine written from scratch in Go — custom on-disk columnar format, SQL parser, rule-based optimizer, and a vectorized execution engine. Benchmarked against <b>DuckDB as the ceiling and SQLite as the floor</b>, same machine, configs disclosed.</div>
         <ul>
-          <li><b>Benchmarks</b> — same machine, disclosed configs
+          <li><b>The ceiling — vs DuckDB</b> on TPC-H SF1 (6M lineitem rows), decomposed into per-core efficiency and end-to-end throughput
             <ul>
-              <li>TPC-H Q1 all cores: <b>22 ms vs DuckDB's 19 ms</b> (steady-state); within <b>1.2×</b> single-threaded<span class="stat">within 1.2x of duckdb on q1</span></li>
-              <li><b>3.0–18.4× over SQLite</b> on all four benchmarked queries<span class="stat">3.0–18.4× sqlite</span></li>
-              <li>An isolated C++/AVX2 kernel study measured the <b>SIMD filter ceiling at 3.3×</b> — the honest upper bound on hand-vectorizing the filter path</li>
+              <li>Q1 all cores: <b>22 ms vs 19 ms</b> steady-state — within <b>1.2×</b> — and it <em>matches</em> DuckDB's 24 ms cold-start outright<span class="stat">within 1.2× of duckdb</span></li>
+              <li>Single-threaded Q1 <b>193 ms vs 159 ms</b>, also 1.2× per-core; the gap widens on the join-heavy queries — Q3 2.2×, Q12 2.9×</li>
+              <li><b>The caveat:</b> DuckDB runs ARM64 here, without its strongest AVX-512 paths — same-machine and fair, but not a claim of parity</li>
             </ul>
           </li>
-          <li><b>Custom columnar format</b>
+          <li><b>The floor — vs SQLite</b>, <b>3.0–18.4×</b> across all four benchmarked queries<span class="stat">3.0–18.4× sqlite</span>
             <ul>
-              <li>Per-row-group <b>zone maps</b> skip entire row groups before any block I/O</li>
-              <li>Strings <b>dictionary-encoded</b> — equality checks collapse to integer comparison in the filter hot path</li>
-              <li><b>CRC32</b> block integrity throughout</li>
+              <li>Q3 (3-table join) <b>18.4×</b> · Q1 <b>11.4×</b> · Q6 <b>5.7×</b> · Q12 <b>3.0×</b> — a sanity floor, not a headline: beating a row-store on OLAP scans is the expected result</li>
             </ul>
           </li>
-          <li><b>Vectorized Volcano engine</b> — 1,024-row batches sized to L1 cache, selection-vector filters
+          <li><b>The <code>.vxq</code> columnar format</b> — written from the byte layout up
             <ul>
-              <li><b>Pratt SQL parser</b> → predicate-pushdown and join-column-pruning optimizer</li>
-              <li>Correctness held by a <b>72-query golden oracle</b> across 4 execution paths — serial, parallel, optimizer-off, stacked-filter — all under <code>-race</code> in CI<span class="stat">72-query oracle</span></li>
+              <li>Per-row-group <b>zone maps</b> skip entire row groups before any block I/O, driven by pushed-down predicates</li>
+              <li>Strings <b>dictionary-encoded</b> so equality collapses to integer comparison in the filter hot loop — and to integer-keyed aggregation in GROUP BY</li>
+              <li><b>CRC32</b> block integrity, append-only manifest, atomic temp+rename writes — the same durability spine as distrikv — plus an <b>fsck</b> that validates CRCs, footer, and zone maps</li>
             </ul>
           </li>
-          <li><b>Parallel scaling: the GC was the bottleneck, and I proved it</b>
+          <li><b>Vectorized Volcano execution</b> — 1,024-row batches sized to saturate L1 and amortize operator dispatch
             <ul>
-              <li>A <b>GOGC ablation</b> isolated Go's garbage collector at <b>26–50% of parallel wall time</b></li>
+              <li><b>Selection-vector</b> filters with no allocation on the hot path; Project lazily materializes <em>through</em> the selection vector</li>
+              <li><b>Pratt-precedence</b> parser → logical plan → rule-based optimizer → physical plan, with predicate pushdown and column pruning that reaches <b>through joins</b>, not just scans</li>
+              <li><b>Morsel-driven</b> work-stealing scheduler; radix-partitioned parallel join build feeding a morsel-parallel probe and partial-aggregate merge</li>
+            </ul>
+          </li>
+          <li><b>Parallel scaling: the GC was the bottleneck, and I proved it before touching anything</b>
+            <ul>
+              <li>A <b>GOGC ablation</b> isolated Go's garbage collector at <b>26–50% of parallel wall time</b> — diagnosis first, not a guess</li>
               <li>Allocation campaign — flat open-addressed join table, per-worker pipeline reuse, scratch-buffer pooling — cut join-build allocations <b>1.2M → 1.5K per op</b><span class="stat">1.2M → 1.5K allocs</span></li>
-              <li>GC's share fell to <b>0–19%</b>, lifting Q1 to <b>8.6× scaling on 14 cores</b> — about <b>86% of the 10-P-core ceiling</b></li>
+              <li>GC's share fell to <b>0–19%</b>, lifting Q1 to <b>8.6× on 14 cores</b> — about <b>86% of the realistic 10-P-core ceiling</b><span class="stat">8.6× on 14 cores</span></li>
+              <li>Stated like-for-like (GOGC off on both sides) that's <b>4.4–8.8×</b> across the four queries — the flattering number and the strict one, both published</li>
+            </ul>
+          </li>
+          <li><b>Correctness</b> — a <b>72-query golden oracle</b> against a naive row-at-a-time reference evaluator<span class="stat">72/72 × 4 paths</span>
+            <ul>
+              <li>Run across <b>four execution paths</b> — serial, parallel, optimizer-off, stacked-filter — all under <code>-race</code> in CI, <b>72/72 on every path</b></li>
+              <li>All four TPC-H results verified identical to SQLite in-harness (Q6's SUM to 1e-9 relative tolerance); canonical Q6 matches DuckDB exactly</li>
+            </ul>
+          </li>
+          <li><b>Optimizations measured and then declined</b> — the part that usually goes unpublished
+            <ul>
+              <li>In-engine SIMD profiled at a <b>~1.03×</b> end-to-end ceiling and probe-stream partitioning at <b>~1.005×</b>: both cut, because serial wall time is dominated by <b>pread syscalls and page management, not compute</b></li>
+              <li>An isolated C++/AVX2 kernel study put the raw <b>SIMD filter ceiling at 3.3×</b> — real in a microbenchmark, and still not worth shipping end-to-end<span class="stat">3.3× simd ceiling</span></li>
+              <li>So the honest remaining wins are I/O-side — late materialization and adaptive compression — and both are still open</li>
+            </ul>
+          </li>
+        </ul>
+      </article>
+
+      <!-- Wildfire -->
+      <article class="proj reveal">
+        <div class="pkn"><span>Jan 2026 · hardened Aug 2026</span><span>C++17 · OpenMP · GDAL · PostGIS · Docker · Leaflet</span></div>
+        <h3><a href="https://github.com/ryderpongracic1/wildfire-simulator" target="_blank" rel="noopener">Wildfire Spread Simulator ↗</a></h3>
+        <div class="stack">Geospatial fire propagation in C++ — and a lesson in proving a model actually responds to its inputs.</div>
+        <ul>
+          <li><b>Deterministic time-of-arrival propagation</b> driven by directional <b>Rothermel</b> rate-of-spread
+            <ul>
+              <li>Wind elongation, slope asymmetry, moisture damping and extinction, and firebreaks all <em>measurably</em> change the burn</li>
+              <li>This replaced a model that burned an identical square regardless of input — proved with a <b>9-configuration diagnostic</b> before rewriting anything<span class="stat">9-config diagnostic</span></li>
+            </ul>
+          </li>
+          <li><b>Regression suite from zero</b> — <b>15-case C++ physics</b> suite under CTest plus <b>44 API tests</b>
+            <ul>
+              <li>Every shape-response test provably <em>fails</em> against the old model — that's the revert-check<span class="stat">15 c++ · 44 api</span></li>
+            </ul>
+          </li>
+          <li><b>Rebuilt the parallel step copy-free</b> — benchmark <b>1.27s → 0.20s</b>
+            <ul>
+              <li>The original's OpenMP was a measured <b>2× slowdown</b>, not a speedup<span class="stat">1.27s → 0.20s</span></li>
+            </ul>
+          </li>
+          <li><b>Infrastructure hardening</b>
+            <ul>
+              <li>Multi-stage <b>Docker</b> build compiles the simulator binary into the API image — removed a docker-engine-in-container escape hatch</li>
+              <li>Bounded execution pool and path-containment validation on user-supplied raster paths</li>
+              <li><b>CRS-aware Leaflet</b> rendering over a <b>PostGIS</b> pipeline — fires now draw where the data says they happened</li>
             </ul>
           </li>
         </ul>
@@ -666,38 +728,6 @@
             <ul>
               <li>The GDS tests run against a <b>live Neo4j + GDS container</b> — zero skips, so the graph algorithms are exercised for real rather than mocked</li>
               <li><b>GitHub Actions CI</b> across Python 3.9–3.11 with a Neo4j service container</li>
-            </ul>
-          </li>
-        </ul>
-      </article>
-
-      <!-- Wildfire -->
-      <article class="proj reveal">
-        <div class="pkn"><span>Jan 2026 · hardened Aug 2026</span><span>C++17 · OpenMP · GDAL · PostGIS · Docker · Leaflet</span></div>
-        <h3><a href="https://github.com/ryderpongracic1/wildfire-simulator" target="_blank" rel="noopener">Wildfire Spread Simulator ↗</a></h3>
-        <div class="stack">Geospatial fire propagation in C++ — and a lesson in proving a model actually responds to its inputs.</div>
-        <ul>
-          <li><b>Deterministic time-of-arrival propagation</b> driven by directional <b>Rothermel</b> rate-of-spread
-            <ul>
-              <li>Wind elongation, slope asymmetry, moisture damping and extinction, and firebreaks all <em>measurably</em> change the burn</li>
-              <li>This replaced a model that burned an identical square regardless of input — proved with a <b>9-configuration diagnostic</b> before rewriting anything<span class="stat">9-config diagnostic</span></li>
-            </ul>
-          </li>
-          <li><b>Regression suite from zero</b> — <b>15-case C++ physics</b> suite under CTest plus <b>44 API tests</b>
-            <ul>
-              <li>Every shape-response test provably <em>fails</em> against the old model — that's the revert-check<span class="stat">15 c++ · 44 api</span></li>
-            </ul>
-          </li>
-          <li><b>Rebuilt the parallel step copy-free</b> — benchmark <b>1.27s → 0.20s</b>
-            <ul>
-              <li>The original's OpenMP was a measured <b>2× slowdown</b>, not a speedup<span class="stat">1.27s → 0.20s</span></li>
-            </ul>
-          </li>
-          <li><b>Infrastructure hardening</b>
-            <ul>
-              <li>Multi-stage <b>Docker</b> build compiles the simulator binary into the API image — removed a docker-engine-in-container escape hatch</li>
-              <li>Bounded execution pool and path-containment validation on user-supplied raster paths</li>
-              <li><b>CRS-aware Leaflet</b> rendering over a <b>PostGIS</b> pipeline — fires now draw where the data says they happened</li>
             </ul>
           </li>
         </ul>
