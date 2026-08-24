@@ -334,7 +334,7 @@
     </div>
     <div class="right">
       <p class="reveal">A computer scientist at <em>Georgia Tech</em> — building distributed systems, query engines, and graph-data tooling from the ground up. I work at the intersection of low-level storage engineering and large-scale data problems.</p>
-      <p class="reveal">Currently an SDE intern at <em>Amazon FinTech</em> in Arlington, VA — shipping serverless financial infrastructure. Finishing my B.S. in December, then straight into the MS. Always interested in hard engineering problems.</p>
+      <p class="reveal">Most recently an SDE intern at <em>Amazon FinTech</em> in Arlington, VA — shipping serverless financial infrastructure. Finishing my B.S. in December, then straight into the MS. Always interested in hard engineering problems.</p>
       <div class="meta reveal">
         <span>MS CS @ Georgia Tech '28</span>
         <a href="resume.pdf" download>Resume ↓</a>
@@ -356,12 +356,12 @@
     </div>
 
     <div class="xp reveal">
-      <div class="when">Jun 2026 — Present</div>
+      <div class="when">Jun 2026 — Aug 2026</div>
       <div>
         <h3 class="role">Software Development Engineer Intern</h3>
         <div class="org">Amazon &nbsp;·&nbsp; FinTech</div>
         <ul>
-          <li>Authored the approved design doc and shipped a <b>Step Functions</b>-orchestrated asset reclassification service end-to-end across <b>80 production CRs</b> (Java Lambda, Smithy APIs, TypeScript CDK) at a <b>100% line/branch coverage</b> gate
+          <li>Authored the approved design doc and shipped a <b>Step Functions</b>-orchestrated asset reclassification service end-to-end across <b>90 production CRs</b> (Java Lambda, Smithy APIs, TypeScript CDK) at a <b>100% line/branch coverage</b> gate
             <ul>
               <li>Cut a <b>2–3 week</b> manual cross-team process to <b>under 5 minutes</b></li>
               <li>Closed a data-integrity gap that could silently orphan assets and break GL postings across every active category</li>
@@ -484,7 +484,7 @@
     <div class="sec-head">
       <span class="num">§ 03</span>
       <span class="title">Selected projects</span>
-      <span class="right">Five works</span>
+      <span class="right">Six works</span>
     </div>
 
     <div class="proj-grid">
@@ -532,6 +532,51 @@
               <li>Final gate: <b>4/4 consecutive chaos runs plus control all PASS</b> with linearizable histories</li>
             </ul>
           </li>
+        </ul>
+      </article>
+
+      <!-- stormglass -->
+      <article class="proj reveal">
+        <div class="pkn"><span>Aug 2026</span><span>C++20 · Event-time · CMake · Multi-threaded</span></div>
+        <h3><a href="https://github.com/ryderpongracic1/stormglass" target="_blank" rel="noopener">stormglass — Event-Time Stream Processor ↗</a></h3>
+        <div class="stack">A single-process, keyed-parallel stream processing engine with <b>verified windowed aggregation semantics</b>. Tumbling and sliding windows, bounded out-of-orderness watermarks, at-least-once delivery through atomic checkpoint/restore — and a differential oracle that has to agree with the engine on every drop and every fire.</div>
+        <ul>
+          <li><b>The correctness property</b> — an <em>unmodified</em> oracle, fed the same deterministic input, computes exactly the engine's drop/fire decisions
+            <ul>
+              <li>Single-source differential: <b>100 seeds × 10K records, 0 mismatches</b><span class="stat">0 mismatches</span></li>
+              <li>Cross-N proof: N in {1, 2, 4, 8} × 3 disorder profiles — every N matches both the oracle <em>and</em> the single-threaded run on result set and drops, so <b>parallelism is invisible to the semantics</b></li>
+              <li>Multi-source: K in {1, 2, 3} over both engines — <b>engine_drop == oracle_drop</b> exactly (1,312/1,312 on a K=3 heavy-tailed run, 50 seeds)<span class="stat">143 tests</span></li>
+            </ul>
+          </li>
+          <li><b>Multi-source fan-in</b> — K independent sources merged ahead of an unchanged pipeline
+            <ul>
+              <li>Watermark is the running <b>MIN across active channels</b>, emitted only on strict advance so it can never regress; a resumed idle source re-pins the MIN and its records fall through the <em>existing</em> lateness policy — no special case</li>
+              <li>Idleness is a <b>deterministic empty-pull timeout</b>, never wall-clock — the whole reason the oracle can replay the merged trajectory at all</li>
+              <li>Real <b>K-way Chandy-Lamport barrier alignment</b>: the Nth merged barrier lands at exactly N·Σ(intervals), which is a direct proof that no record leaked past a channel's barrier and none went missing</li>
+              <li>Idle channels are excluded from the alignment set — without that, an active channel blocks forever on a quiet source (proven as a liveness test, not assumed)</li>
+            </ul>
+          </li>
+          <li><b>Keyed parallelism, shared-nothing</b> — records hash-routed by <code>FNV-1a(key) % N</code> so each worker owns a disjoint slice of state
+            <ul>
+              <li>Distributed checkpointing is all-or-nothing: a partial partition set is a <b>torn</b> global checkpoint and is never restored from</li>
+              <li>Snapshot restore costs <b>1.73 ms</b> — reported separately from the toy source's O(offset) replay so the harness cost never masks the real one<span class="stat">1.73 ms restore</span></li>
+            </ul>
+          </li>
+          <li><b>Crash recovery under the nastiest timing</b> — fork + SIGKILL landed <em>mid-barrier-alignment</em>, with epoch N never emitted
+            <ul>
+              <li>Restore falls back to the last fully-aligned checkpoint: <b>5/5 runs, 0 missing, 0 duplicated</b><span class="stat">0 missing</span></li>
+              <li>Plus 20 between-checkpoint kills, 6 mid-checkpoint, and a partitioned torn-checkpoint nemesis at N in {2, 4} — all 0 missing</li>
+            </ul>
+          </li>
+          <li><b>Measured honestly, including where it doesn't hold up</b>
+            <ul>
+              <li>Single-threaded core <b>~8.5–9.0M rec/s</b> on a quiet box; an earlier 1.8M figure was measured under contention and is <em>retracted</em> rather than quietly dropped</li>
+              <li>The <code>SourceMerge</code> wrapper costs <b>~11%</b> where the noise floor is low enough to resolve it — and that cost <b>does not grow with fan-in</b> (K=3 outruns K=1 on both machines, since higher K coalesces watermark advances)</li>
+              <li>Alignment at ~10 epochs is <b>below the run-to-run variance</b> — stated as bounded, not free, because the sign of the median delta flips between runs</li>
+              <li>The N≥4 scaling curve <em>regressed</em>; per-record Router hand-off was the cause, and batching cut that overhead <b>44–56%</b> — the multicore re-measurement is still pending and is labeled as such</li>
+            </ul>
+          </li>
+          <li><b>Cross-platform discipline</b> — <code>std::uniform_int_distribution</code> is implementation-defined, so libstdc++ and libc++ generate different streams and different absolute counts (1,312 vs 1,241). The invariant isn't the count, it's <b>engine == oracle on each platform independently</b> — verified on both</li>
         </ul>
       </article>
 

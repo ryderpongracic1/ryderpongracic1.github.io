@@ -1,9 +1,9 @@
 \resumeSubHeadingListStart
   \resumeSubheading
-  {Amazon}{Jun. 2026 \textemdash\ Present}
+  {Amazon}{Jun. 2026 \textemdash\ Aug. 2026}
   {Software Development Engineer Intern $|$ FinTech Org}{Arlington, VA}
   \resumeItemListStart
-    \resumeItem{Authored the approved design doc \& shipped a \textbf{Step Functions-orchestrated} asset reclassification service end-to-end across \textbf{80 production CRs} (Java Lambda, \textbf{Smithy} APIs, TypeScript \textbf{CDK}) at a \textbf{100\% line/branch coverage} gate, cutting a \textbf{2--3 week} manual cross-team process to \textbf{under 5 minutes} \& closing a data-integrity gap that silently orphaned assets.}
+    \resumeItem{Authored the approved design doc \& shipped a \textbf{Step Functions-orchestrated} asset reclassification service end-to-end across \textbf{90 production CRs} (Java Lambda, \textbf{Smithy} APIs, TypeScript \textbf{CDK}) at a \textbf{100\% line/branch coverage} gate, cutting a \textbf{2--3 week} manual cross-team process to \textbf{under 5 minutes} \& closing a data-integrity gap that silently orphaned assets.}
     \resumeItem{Built the execution layer on a \textbf{Distributed Map} (25-asset batches, 25$\times$ concurrency) over a batch subledger API with \textbf{DynamoDB TransactWriteItems} sentinel locking \& deterministic idempotency keys for \textbf{exactly-once} execution; \textbf{reclassified 13,368 assets in a 60-second run across 535 batches, 0 failures}, scaling \textbf{sublinearly} (+36\% volume, +24\% wall clock) at a measured \textbf{\$0.03 per 10K assets} of infrastructure cost.}
     \resumeItem{Replaced a paginated API's \textbf{10K-record hard ceiling} with an \textbf{Athena UNLOAD} enumeration adapter, streaming manifests for \textbf{5.77M+ records} across all 225 categories to S3 with parameterized queries \& failsafe retry polling.}
     \resumeItem{Root-caused an \textbf{org-wide pipeline outage} outside my project: a hardcoded canary assertion tripped a CodeDeploy alarm halting all Lambda traffic shifts behind an opaque CloudFormation error; shipped the fix \& restored deploys.}
