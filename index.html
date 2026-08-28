@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>ryder pongracic // portfolio</title>
+<title>Ryder Pongracic — Backend &amp; Infrastructure Engineer</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Ryder Pongracic — CS @ Georgia Tech. Distributed systems, query engines, graph-data tooling. SDE intern at Amazon FinTech.">
+<meta name="description" content="Ryder Pongracic is a backend and infrastructure engineer building reliable workflows, distributed systems, data platforms, and performance-critical software.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&display=swap" rel="stylesheet">
@@ -185,6 +185,13 @@
   .xp .when { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim); padding-top: 8px; }
   .xp .role { font-size: 18px; line-height: 1.3; font-weight: 500; margin: 0 0 4px; letter-spacing: 0; }
   .xp .org { font-weight: 300; font-size: 18px; color: var(--dim); margin-bottom: 10px; }
+  .xp .tools {
+    margin: -4px 0 12px;
+    color: var(--dim);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
   .xp .org a { color: inherit; text-decoration: none; border-bottom: 1px solid var(--rule); }
   .xp .org a:hover { color: var(--accent); border-color: var(--accent); }
   .xp ul { margin: 6px 0 0; padding-left: 18px; font-size: 14px; line-height: 1.6; max-width: 62ch; }
@@ -222,26 +229,14 @@
   #proj .proj {
     padding: 24px 22px 20px;
     height: 660px;
-    display: flex; flex-direction: column;
-    overflow: hidden;
+    display: flex;
+    flex-direction: column;
   }
-  /* the header block stays put; only the detail list scrolls */
-  #proj .proj > ul {
-    flex: 1 1 auto; min-height: 0;
-    overflow-y: auto;
-    padding-right: 12px;
-    padding-bottom: 20px;
-    scrollbar-width: thin;
-    scrollbar-color: var(--rule) transparent;
-  }
-  #proj .proj > ul::-webkit-scrollbar { width: 5px; }
-  #proj .proj > ul::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 3px; }
-  #proj .proj > ul::-webkit-scrollbar-track { background: transparent; }
-  /* fade the cut edge so it reads as "more below", not a crop */
-  #proj .proj::after {
-    content: ''; position: absolute; left: 1px; right: 1px; bottom: 1px;
-    height: 36px; pointer-events: none;
-    background: linear-gradient(to bottom, rgba(221,216,201,0) 0%, rgba(221,216,201,0.92) 70%, var(--paper) 100%);
+  #proj .proj > ul { flex: 1 1 auto; }
+  #proj .proj > ul:not(.project-summary) { display: none; }
+  #proj .project-summary {
+    margin-top: 12px;
+    padding-left: 16px;
   }
   #proj .proj h3 { font-size: 19px; }
   #proj .proj .stack { font-size: 14px; }
@@ -271,6 +266,18 @@
     font-size: 11px; letter-spacing: 0.05em; text-transform: uppercase;
     padding: 2px 7px; border-radius: 2px; margin-left: 4px; font-weight: 500;
   }
+  .proj .case-link {
+    display: inline-block;
+    margin-top: 16px;
+    padding-bottom: 2px;
+    border-bottom: 1px solid var(--rule);
+    color: var(--ink);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+  .proj .case-link:hover { color: var(--accent); border-color: var(--accent); }
 
   /* contact */
   .contact {
@@ -282,6 +289,18 @@
   }
   .contact .big { font-weight: 400; font-size: clamp(32px, 5vw, 56px); line-height: 1.1; margin: 0; letter-spacing: -0.03em; }
   .contact .big .it { font-weight: 300; }
+  .contact-note { max-width: 46ch; margin: 20px 0 18px; color: var(--dim); }
+  .contact-cta {
+    display: inline-block;
+    padding: 8px 12px;
+    border: 1px solid var(--ink);
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .contact-cta:hover { color: var(--accent); border-color: var(--accent); }
   .contact dl {
     margin: 0; padding: 0;
     display: grid;
@@ -320,9 +339,7 @@
     main { padding: 24px 32px 48px; }
     .xp { break-inside: avoid; }
     .proj { break-inside: avoid; }
-    #proj .proj { height: auto; overflow: visible; }
-    #proj .proj > ul { overflow: visible; padding-right: 0; padding-bottom: 0; }
-    #proj .proj::after { display: none; }
+    #proj .proj { height: auto; }
     .sec { break-inside: avoid; }
     .reveal { opacity: 1 !important; transform: none !important; }
   }
@@ -333,9 +350,7 @@
   }
   @media (max-width: 768px) {
     #proj .proj-grid { grid-template-columns: 1fr; }
-    #proj .proj { height: auto; overflow: visible; }
-    #proj .proj > ul { overflow: visible; padding-right: 0; padding-bottom: 0; }
-    #proj .proj::after { display: none; }
+    #proj .proj { height: auto; }
     main { padding: 32px 24px 100px; }
     .topbar { grid-template-columns: 1fr 1fr; }
     .topbar .mid { display: none; }
@@ -372,8 +387,8 @@
       <h1>Ryder<br/><span class="it">Pongracic</span></h1>
     </div>
     <div class="right">
-      <p class="reveal">A computer scientist at <em>Georgia Tech</em> — building distributed systems, query engines, and graph-data tooling from the ground up. I work at the intersection of low-level storage engineering and large-scale data problems.</p>
-      <p class="reveal">Most recently an SDE intern at <em>Amazon FinTech</em> in Arlington, VA — shipping serverless financial infrastructure. Finishing my B.S. in December, then straight into the MS. Always interested in hard engineering problems.</p>
+      <p class="reveal"><em>Backend and infrastructure engineer</em> building reliable workflows and data systems. I care about correctness, performance, recovery, and the operational details that turn a design into something people can trust.</p>
+      <p class="reveal">At <em>Amazon FinTech</em>, I shipped an asset-reclassification service that reduced a 2–3 week process to under five minutes. I also build and rigorously test distributed storage, event-processing, and analytical systems.</p>
       <div class="meta reveal">
         <span>MS CS @ Georgia Tech '28</span>
         <a href="resume.pdf" download>Resume ↓</a>
@@ -390,8 +405,8 @@
   <section class="sec" id="xp">
     <div class="sec-head">
       <span class="num">§ 01</span>
-      <span class="title">Work, in chronology</span>
-      <span class="right">Four roles</span>
+      <span class="title">Experience</span>
+      <span class="right">Production · research · web</span>
     </div>
 
     <div class="xp reveal">
@@ -399,25 +414,11 @@
       <div>
         <h3 class="role">Software Development Engineer Intern</h3>
         <div class="org">Amazon &nbsp;·&nbsp; FinTech</div>
+        <div class="tools">Java · AWS Lambda · Step Functions · DynamoDB · Athena · TypeScript CDK</div>
         <ul>
-          <li>Authored the approved design doc and shipped a <b>Step Functions</b>-orchestrated asset reclassification service end-to-end across <b>90 production CRs</b> (Java Lambda, Smithy APIs, TypeScript CDK) at a <b>100% line/branch coverage</b> gate
-            <ul>
-              <li>Cut a <b>2–3 week</b> manual cross-team process to <b>under 5 minutes</b></li>
-              <li>Closed a data-integrity gap that could silently orphan assets and break GL postings across every active category</li>
-            </ul>
-          </li>
-          <li>Built the execution layer on a <b>Distributed Map</b> — 25-asset batches at 25× concurrency over a batch subledger API, with <b>DynamoDB TransactWriteItems</b> sentinel locking and deterministic idempotency keys for exactly-once execution
-            <ul>
-              <li><b>13,368 assets</b> reclassified in a <b>60-second</b> run across 535 batches, <b>0 failures</b></li>
-              <li>Scales sublinearly — <b>+36% volume for +24% wall clock</b> — at a measured <b>$0.03 per 10K assets</b> of infrastructure cost</li>
-            </ul>
-          </li>
-          <li>Replaced a paginated API's <b>10K-record hard ceiling</b> with an <b>Athena UNLOAD</b> enumeration adapter
-            <ul>
-              <li>Streams manifests for <b>5.77M+ records</b> across all <b>225 categories</b> to S3 with parameterized queries and failsafe retry polling</li>
-            </ul>
-          </li>
-          <li>Root-caused an <b>org-wide pipeline outage</b> outside my own project — a hardcoded canary assertion tripped a <b>CodeDeploy</b> alarm halting all Lambda traffic shifts behind an opaque CloudFormation error; shipped the fix and restored deploys</li>
+          <li><b>Owned the design and production delivery</b> of an asset-reclassification workflow, reducing a <b>2–3 week</b> cross-team process to <b>under five minutes</b> and closing a data-integrity gap that could orphan assets and disrupt general-ledger postings.</li>
+          <li>Designed transaction-guarded <b>idempotency and duplicate suppression</b> across 25-way concurrent batch execution; processed <b>13,368 assets</b> across 535 batches in <b>60 seconds</b> with <b>zero failures</b> at a measured <b>$0.03 per 10K assets</b>.</li>
+          <li>Removed a <b>10,000-record API ceiling</b> with an Athena-to-S3 enumeration path for <b>5.77M+ records</b> across 225 categories; separately diagnosed and fixed an <b>organization-wide deployment outage</b> caused by a failing canary assertion.</li>
         </ul>
       </div>
       <div class="where">Arlington, VA</div>
@@ -522,8 +523,8 @@
   <section class="sec" id="proj">
     <div class="sec-head">
       <span class="num">§ 03</span>
-      <span class="title">Selected projects</span>
-      <span class="right">Six works</span>
+      <span class="title">Selected engineering work</span>
+      <span class="right">Reliability · data · performance</span>
     </div>
 
     <div class="proj-grid">
@@ -535,7 +536,14 @@
           <span>Go · gRPC · LSM-Tree · Raft · Docker</span>
         </div>
         <h3><a href="https://github.com/ryderpongracic1/distrikv" target="_blank" rel="noopener">distrikv — Distributed Key-Value Store ↗</a></h3>
-        <div class="stack">A strictly consistent CP key-value store, hand-rolled in Go — the <b>hash ring owns replication</b>, Raft carries only node health. Every number below is measured on a live 3-node cluster.</div>
+        <div class="stack">A replicated Go key-value store for studying consistency, ambiguous failures, and recovery under fault injection.</div>
+        <ul class="project-summary">
+          <li><b>Problem</b> — preserve correctness through partial failures, including writes applied despite a failed response.</li>
+          <li><b>Decision</b> — model ambiguous outcomes explicitly; repair with per-key sequence numbers and an idempotent WAL.</li>
+          <li><b>Correctness</b> — chaos-tested histories remained linearizable; ~104K refused-but-applied writes converged as 373 deduplicated entries in 1–5 seconds.</li>
+          <li><b>Performance</b> — 6,017 reads/s at p99 1.7 ms and 1,200 writes/s at p99 4.6 ms on a 3-node cluster.</li>
+        </ul>
+        <a class="case-link" href="https://github.com/ryderpongracic1/distrikv" target="_blank" rel="noopener">Full case study on GitHub ↗</a>
         <ul>
           <li><b>Throughput ceiling</b> — 3-node Docker cluster, open-loop Poisson load, 128 workers, 256B values
             <ul>
@@ -578,7 +586,14 @@
       <article class="proj reveal">
         <div class="pkn"><span>Flagship · Aug 2026</span><span>C++20 · Event-time · CMake</span></div>
         <h3><a href="https://github.com/ryderpongracic1/stormglass" target="_blank" rel="noopener">stormglass — Event-Time Stream Processor ↗</a></h3>
-        <div class="stack">A keyed-parallel event-time stream processor in C++20 — tumbling and sliding windows, bounded out-of-orderness watermarks, at-least-once checkpoint/restore — with a <b>differential oracle</b> that has to agree on every drop and every fire.</div>
+        <div class="stack">A C++ event processor with keyed parallelism, event-time windows, and crash-safe checkpoint recovery.</div>
+        <ul class="project-summary">
+          <li><b>Problem</b> — keep window results correct through late events, duplicate delivery, multi-source fan-in, and crashes.</li>
+          <li><b>Decision</b> — min-combine watermarks, align checkpoints across channels, and reject torn snapshots.</li>
+          <li><b>Correctness</b> — 100 seeded differential runs had zero mismatches; five mid-alignment crash runs restored with zero missing or duplicated results.</li>
+          <li><b>Performance</b> — ~8.5–9.0M records/s single-threaded; batching cut per-record hand-off overhead by 44–56%.</li>
+        </ul>
+        <a class="case-link" href="https://github.com/ryderpongracic1/stormglass" target="_blank" rel="noopener">Full case study on GitHub ↗</a>
         <ul>
           <li><b>The correctness property</b> — an <em>unmodified</em> oracle, fed the same deterministic input, computes exactly the engine's drop/fire decisions
             <ul>
@@ -623,7 +638,14 @@
       <article class="proj reveal">
         <div class="pkn"><span>Flagship · May 2026 — Aug 2026</span><span>Go · C++/AVX2 · SQL</span></div>
         <h3><a href="https://github.com/ryderpongracic1/vexq" target="_blank" rel="noopener">vexq — Vectorized SQL Query Engine ↗</a></h3>
-        <div class="stack">A complete analytical query engine from scratch in Go — columnar format, SQL parser, optimizer, vectorized execution. Benchmarked with <b>DuckDB as the ceiling, SQLite as the floor</b>, same machine.</div>
+        <div class="stack">A Go analytical query engine spanning columnar storage, SQL planning, and vectorized parallel execution.</div>
+        <ul class="project-summary">
+          <li><b>Problem</b> — build a complete analytical engine, then identify what actually limits parallel queries.</li>
+          <li><b>Decision</b> — profile first; target I/O and allocation pressure rather than microbenchmark-friendly SIMD.</li>
+          <li><b>Correctness</b> — a 72-query oracle passes across serial, parallel, optimizer-off, and stacked-filter paths.</li>
+          <li><b>Performance</b> — join-build allocations fell from 1.2M to 1.5K per operation; Q1 reached 8.6× on 14 cores and 22 ms versus DuckDB's 19 ms.</li>
+        </ul>
+        <a class="case-link" href="https://github.com/ryderpongracic1/vexq" target="_blank" rel="noopener">Full case study on GitHub ↗</a>
         <ul>
           <li><b>The ceiling — vs DuckDB</b> on TPC-H SF1 (6M lineitem rows), decomposed into per-core efficiency and end-to-end throughput
             <ul>
@@ -680,6 +702,13 @@
         <div class="pkn"><span>Jan 2026 · hardened Aug 2026</span><span>C++17 · OpenMP · GDAL · PostGIS · Docker · Leaflet</span></div>
         <h3><a href="https://github.com/ryderpongracic1/wildfire-simulator" target="_blank" rel="noopener">Wildfire Spread Simulator ↗</a></h3>
         <div class="stack">Geospatial fire propagation in C++ — and a lesson in proving a model actually responds to its inputs.</div>
+        <ul class="project-summary">
+          <li><b>Problem</b> — the original simulation produced the same burn shape regardless of wind, slope, or moisture inputs.</li>
+          <li><b>Decision</b> — replace it with deterministic time-of-arrival propagation driven by directional Rothermel rate-of-spread.</li>
+          <li><b>Correctness</b> — 15 C++ physics cases and 44 API tests validate shape response, with every key regression test failing against the old model.</li>
+          <li><b>Performance</b> — rebuilt the parallel step without full-grid copies, reducing the benchmark from 1.27 seconds to 0.20 seconds.</li>
+        </ul>
+        <a class="case-link" href="https://github.com/ryderpongracic1/wildfire-simulator" target="_blank" rel="noopener">Full case study on GitHub ↗</a>
         <ul>
           <li><b>Deterministic time-of-arrival propagation</b> driven by directional <b>Rothermel</b> rate-of-spread
             <ul>
@@ -715,6 +744,13 @@
           <a href="https://devpost.com/software/team-yugoslavia" target="_blank" rel="noopener" class="aux">devpost ↗</a>
         </h3>
         <div class="stack">Best AI Hack winner · AI repository &amp; code documentation tool.</div>
+        <ul class="project-summary">
+          <li><b>Problem</b> — generate useful documentation across a repository without destroying source structure or blocking on one model provider.</li>
+          <li><b>Decision</b> — order work by dependency graph, preserve source with libcst, and fail over across providers and API keys.</li>
+          <li><b>Correctness</b> — post-hack hardening fixed dependency inversion, zip-slip, and OAuth token handling; the suite grew from zero to 38 tests.</li>
+          <li><b>Outcome</b> — won Best AI Hack and ships documented branches with direct pull-request links plus real-time progress.</li>
+        </ul>
+        <a class="case-link" href="https://github.com/ryderpongracic1/CodeScribe" target="_blank" rel="noopener">Full case study on GitHub ↗</a>
         <ul>
           <li>FastAPI backend + <b>multi-LLM</b> (Groq/Llama-3 + Google Gemini) with intelligent failover — cycles through multiple API keys per provider on rate-limit
             <ul>
@@ -738,6 +774,13 @@
         <div class="pkn"><span>Sep 2025</span><span>Python · Neo4j · Cypher · GDS · GitHub Actions</span></div>
         <h3><a href="https://github.com/ryderpongracic1/wikipedia-analysis" target="_blank" rel="noopener">Wikipedia Citation Network ↗</a></h3>
         <div class="stack">7M articles · 1.2B links · in a graph DB.</div>
+        <ul class="project-summary">
+          <li><b>Problem</b> — ingest and analyze a 500GB+ citation dataset without loading it into memory or losing progress on failure.</li>
+          <li><b>Decision</b> — stream XML with bounded memory and use restartable, idempotent graph writes.</li>
+          <li><b>Correctness</b> — 108 unit and four live Neo4j/GDS integration tests run with zero skips in CI.</li>
+          <li><b>Scale</b> — loaded 7M+ articles and 1.2B+ links while reducing peak ingest memory from 747 MB to 179 MB.</li>
+        </ul>
+        <a class="case-link" href="https://github.com/ryderpongracic1/wikipedia-analysis" target="_blank" rel="noopener">Full case study on GitHub ↗</a>
         <ul>
           <li>Streaming <b>lxml iterparse</b> ingest of <b>500GB+</b> Wikipedia XML dumps
             <ul>
@@ -769,8 +812,8 @@
   <section class="sec" id="archive">
     <div class="sec-head">
       <span class="num">§ 04</span>
-      <span class="title">Archive</span>
-      <span class="right">extras</span>
+      <span class="title">Additional work</span>
+      <span class="right">Product · experiments</span>
     </div>
 
     <div class="proj-grid">
@@ -850,10 +893,14 @@
   <section class="sec contact" id="contact">
     <div class="sec-head" style="grid-column: 1 / -1;">
       <span class="num">§ 05</span>
-      <span class="title">get in touch</span>
+      <span class="title">Let's connect</span>
       <span class="right">Atlanta, GA</span>
     </div>
-    <p class="big reveal">Say <span class="it">hello</span>—<br/>I read every email.</p>
+    <div class="contact-intro reveal">
+      <p class="big">Let's build<br/><span class="it">dependable systems.</span></p>
+      <p class="contact-note">I'm glad to talk about backend engineering, distributed systems, data infrastructure, and early-career software roles.</p>
+      <a class="contact-cta" href="mailto:ryderjmp@gmail.com">Email Ryder ↗</a>
+    </div>
     <dl class="reveal">
       <dt>Email</dt><dd><a href="mailto:ryderjmp@gmail.com">ryderjmp@gmail.com</a></dd>
       <dt>GitHub</dt><dd><a href="https://github.com/ryderpongracic1" target="_blank" rel="noopener">github.com/ryderpongracic1</a></dd>
